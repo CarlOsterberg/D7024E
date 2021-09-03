@@ -1,7 +1,8 @@
 package main
 
-import "fmt"
-
-func main(){
-	fmt.Println("Hello world")
+func main() {
+	x := 0
+	for {
+		x++
+	}
 }
