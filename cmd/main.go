@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	//kademlia "./kademlia"
-	udp "github.com/CarlOsterberg/D7024E"
+	udp "github.com/CarlOsterberg/D7024E/udp"
 	"strings"
 )
 
