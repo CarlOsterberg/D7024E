@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	//kademlia "./kademlia"
-	udp "github.com/CarlOsterberg/D7024E/udp"
+	udp "github.com/CarlOsterberg/D7024E"
 	"strings"
 )
 
@@ -18,13 +18,13 @@ func main() {
 		// convert CRLF to LF
 		switch strings.Replace(text, "\n", "", -1) {
 		case "123":
-			Test()
+			udp.Test()
 		case "server":
 			go func() {
-				Server(comms)
+				udp.Server(comms)
 			}()
 		case "client":
-			Client()
+			udp.Client()
 		default:
 			fmt.Printf("You wrote: %v", text)
 		}
