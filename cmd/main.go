@@ -26,8 +26,16 @@ func main() {
 			msg, _ := reader.ReadString('\n')
 			msg = strings.Replace(msg, "\n", "", -1)
 			udp.Client(ip, msg)
+		case "self":
+			fmt.Printf("%v\n", udp.GetOutboundIP())
 		case "q":
 			run = false
+		case "ping":
+			fmt.Print("IP: ")
+			ip, _ := reader.ReadString('\n')
+			ip = strings.Replace(ip, "\n", "", -1)
+			self := udp.GetOutboundIP().String()
+			udp.Client(ip, string(self)+":1234")
 		default:
 			fmt.Printf("Not a command\n")
 		}

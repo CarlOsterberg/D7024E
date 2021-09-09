@@ -3,11 +3,11 @@ package udp
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"net"
 )
 
-//https://stackoverflow.com/questions/26028700/write-to-client-udp-socket-in-go
-
+//https://stackoverflow.com/a/26032240
 func sendResponse(conn *net.UDPConn, addr *net.UDPAddr) {
 	_, err := conn.WriteToUDP([]byte("Ty 4 msg"), addr)
 	if err != nil {
@@ -37,4 +37,17 @@ func Server(comms chan string) {
 		}
 		go sendResponse(server, remoteaddr)
 	}
+}
+
+//https://stackoverflow.com/a/37382208
+func GetOutboundIP() net.IP {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+	return localAddr.IP
 }
