@@ -1,11 +1,11 @@
 package main
 
 import (
-	//kademlia "./kademlia"
 	"bufio"
 	"fmt"
-	"github.com/CarlOsterberg/D7024E/udp"
 	"os"
+	//kademlia "./kademlia"
+	udp "github.com/CarlOsterberg/D7024E/udp"
 	"strings"
 )
 

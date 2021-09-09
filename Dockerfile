@@ -16,13 +16,13 @@ FROM golang:1.16-alpine
 WORKDIR /app/src
 
 # Download Go modules
-COPY kademlia/go.mod .
+COPY go.mod .
 #COPY go.sum .
 RUN go mod download
 
 # Copy the source code. Note the slash at the end, as explained in
 # https://docs.docker.com/engine/reference/builder/#copy
-COPY src/*.go ./
+COPY *.go ./
 #COPY src/kademlia/*.go ./
 
 # Build
