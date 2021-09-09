@@ -4,31 +4,32 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	//kademlia "./kademlia"
+	//_ "github.com/CarlOsterberg/D7024E/kademlia"
 	udp "github.com/CarlOsterberg/D7024E/udp"
 	"strings"
 )
 
 func main() {
 	comms := make(chan string)
+	go udp.Server(comms)
 	reader := bufio.NewReader(os.Stdin)
-	for {
+	run := true
+	for run {
 		fmt.Print("-> ")
 		text, _ := reader.ReadString('\n')
-		// convert CRLF to LF
 		switch strings.Replace(text, "\n", "", -1) {
-		case "123":
-			udp.Test()
-		case "server":
-			go func() {
-				udp.Server(comms)
-			}()
-		case "client":
-			udp.Client()
-		case "1":
-			fmt.Printf("amendurå")
+		case "send":
+			fmt.Print("IP: ")
+			ip, _ := reader.ReadString('\n')
+			ip = strings.Replace(ip, "\n", "", -1)
+			fmt.Print("msg: ")
+			msg, _ := reader.ReadString('\n')
+			msg = strings.Replace(msg, "\n", "", -1)
+			udp.Client(ip, msg)
+		case "q":
+			run = false
 		default:
-			fmt.Printf("You wrote: %v", text)
+			fmt.Printf("Not a command\n")
 		}
 	}
 }

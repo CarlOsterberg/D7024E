@@ -7,7 +7,8 @@ import (
 	"net"
 )
 
-//https://stackoverflow.com/a/26032240
+//https://stackoverflow.com/questions/26028700/write-to-client-udp-socket-in-go
+
 func Client(address string, msg string) {
 	buffer := make([]byte, 2048)
 	conn, err := net.Dial("udp", address)
