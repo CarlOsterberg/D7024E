@@ -18,13 +18,13 @@ func main() {
 		// convert CRLF to LF
 		switch strings.Replace(text, "\n", "", -1) {
 		case "123":
-			udp.Test()
+			Test()
 		case "server":
 			go func() {
-				udp.Server(comms)
+				Server(comms)
 			}()
 		case "client":
-			udp.Client()
+			Client()
 		default:
 			fmt.Printf("You wrote: %v", text)
 		}
