@@ -26,7 +26,7 @@ COPY *.go ./
 #COPY cmd/kademlia/*.go ./
 
 # Build
-RUN go build -o /kadlab
+# RUN go build -o /kadlab
 
 # This is for documentation purposes only.
 # To actually open the port, runtime parameters
@@ -39,5 +39,10 @@ RUN go build -o /kadlab
 #ENV HTTP_PORT=8081
 
 # Run
+<<<<<<< HEAD
+# CMD [ "/kadlab" ]
+CMD [ "go", "run", "main.go"]
+=======
 #CMD [ "/kadlab" ]
 RUN chmod +x /kadlab
+>>>>>>> 90c673eda2bf4e4e6b675ac7b6d93f6fe763e45e

@@ -1,4 +1,4 @@
-package kademlia
+package src
 
 const alpha = 3
 const k = 20
