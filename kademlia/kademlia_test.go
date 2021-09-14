@@ -9,7 +9,7 @@ import (
 // TestHelloName calls greetings.Hello with a name, checking
 // for a valid return value.
 func TestKademlia_Store(t *testing.T) {
-	var testkad = NewKademlia()
+	var testkad = NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"))
 	key :=  sha1.New()
 	key.Write([]byte("nej men va fan"))
 	testkad.Store([]byte("nej men va fan"))

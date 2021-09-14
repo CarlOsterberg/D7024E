@@ -1,10 +1,13 @@
 package kademlia
 
+import "crypto/sha1"
+
 const alpha = 3
 const k = 20
 
 type Kademlia struct {
 	routingTable RoutingTable
+	valueMap  map[string][]byte
 	network Network
 }
 
@@ -14,6 +17,8 @@ func NewKademlia(me Contact) *Kademlia{
 	kademlia.routingTable = *rt
 	network := &Network{}
 	kademlia.network = *network
+	valueMap := make(map[string][]byte)
+	kademlia.valueMap = valueMap
 	return kademlia
 }
 
@@ -34,10 +39,17 @@ func (kademlia *Kademlia) KClosestNodes(target *Contact) []Contact{
 
 
 
-func (kademlia *Kademlia) LookupData(hash string) {
-	// TODO
+func (kademlia *Kademlia) LookupData(hash string) []byte{
+
+	//fmt.Println("map:", string(kademlia.valueMap[hash]))
+	return kademlia.valueMap[hash]
 }
 
 func (kademlia *Kademlia) Store(data []byte) {
-	// TODO
+	// https://gobyexample.com/sha1-hashes
+	// https://gobyexample.com/maps
+	key :=  sha1.New()
+	key.Write(data)
+	var id = string(key.Sum(nil))
+	kademlia.valueMap[id] = data
 }
