@@ -22,7 +22,8 @@ RUN go mod download
 
 # Copy the source code. Note the slash at the end, as explained in
 # https://docs.docker.com/engine/reference/builder/#copy
-COPY src/*.go ./
+COPY *.go ./
+#COPY cmd/kademlia/*.go ./
 
 # Build
 # RUN go build -o /kadlab
@@ -38,5 +39,10 @@ COPY src/*.go ./
 #ENV HTTP_PORT=8081
 
 # Run
+<<<<<<< HEAD
 # CMD [ "/kadlab" ]
 CMD [ "go", "run", "main.go"]
+=======
+#CMD [ "/kadlab" ]
+RUN chmod +x /kadlab
+>>>>>>> 90c673eda2bf4e4e6b675ac7b6d93f6fe763e45e

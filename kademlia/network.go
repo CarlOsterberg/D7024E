@@ -1,4 +1,4 @@
-package src
+package kademlia
 
 type Network struct {
 }
