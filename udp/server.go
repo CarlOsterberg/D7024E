@@ -1,42 +1,34 @@
 package udp
 
 import (
-	"fmt"
+	"log"
 	"net"
 )
 
-//https://stackoverflow.com/questions/26028700/write-to-client-udp-socket-in-go
-
-func sendResponse(conn *net.UDPConn, addr *net.UDPAddr) (result string) {
-	_, err := conn.WriteToUDP([]byte("From server: Hello I got your message "), addr)
+//https://stackoverflow.com/a/26032240
+func Server(ip string, port int) (*net.UDPConn, error) {
+	//setting IP to nil makes it listen to all available ips
+	addr := net.UDPAddr{
+		IP:   net.ParseIP(ip),
+		Port: port,
+	}
+	server, err := net.ListenUDP("udp", &addr)
 	if err != nil {
-		fmt.Printf("Couldn't send response %v", err)
-		return "Fail"
+		return nil, err
 	} else {
-		return "Success"
+		return server, nil
 	}
 }
 
-func Server(comms chan string) {
-	p := make([]byte, 2048)
-	addr := net.UDPAddr{
-		Port: 1234,
-		IP:   net.ParseIP("127.0.0.1"),
-	}
-	ser, err := net.ListenUDP("udp", &addr)
+//https://stackoverflow.com/a/37382208
+func GetOutboundIP() net.IP {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
-		fmt.Printf("Some error %v\n", err)
-		return
+		log.Fatal(err)
 	}
-	for {
-		_, remoteaddr, err := ser.ReadFromUDP(p)
-		fmt.Printf("Read a message from %v %s \n", remoteaddr, p)
-		if err != nil {
-			fmt.Printf("Some error  %v", err)
-			continue
-		}
-		go func() {
-			fmt.Printf("Did work? %v", sendResponse(ser, remoteaddr))
-		}()
-	}
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+	return localAddr.IP
 }
