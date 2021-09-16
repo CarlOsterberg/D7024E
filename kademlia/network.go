@@ -6,8 +6,8 @@ import (
 	//"github.com/nu7hatch/gouuid" //u, err := uuid.NewV4()
 	"log"
 	"net"
-	json "program/kademlia/json"
-	udp "program/udp"
+	"program/kademlia/msg"
+	"program/udp"
 )
 
 type Network struct {
@@ -35,11 +35,14 @@ func (network *Network) Listen(ip string, port int) {
 }
 
 func (network *Network) handleRPC(conn *net.UDPConn, addr *net.UDPAddr, data []byte) {
-	msg := json.DecodeRPC(data)
-	if msg != nil {
-		switch msg.RPC {
+	bytes := msg.DecodeRPC(data)
+	if bytes != nil {
+		switch bytes.RPC {
 		case "PING":
-			_, err := conn.WriteToUDP(json.MakePong(network.Self), addr)
+			_, err := conn.WriteToUDP(
+				msg.MakePong(network.Self),
+				addr,
+			)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -50,7 +53,7 @@ func (network *Network) handleRPC(conn *net.UDPConn, addr *net.UDPAddr, data []b
 }
 
 func (network *Network) SendPingMessage(contact *Contact) {
-	msg := json.MakePing(contact.Address)
+	msg := msg.MakePing(contact.Address)
 	udp.Client(contact.Address, string(msg))
 }
 

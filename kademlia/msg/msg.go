@@ -1,4 +1,4 @@
-package json
+package msg
 
 import (
 	"encoding/json"
@@ -10,6 +10,19 @@ type RPC struct {
 	RPC string
 	//uuid *uuid.UUID
 	Address string
+}
+
+func MakePong(address string) []byte {
+	pong := &RPC{
+		RPC:     "PONG",
+		Address: address,
+	}
+	data, err := json.Marshal(pong)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	return data
 }
 
 func TestRPC(x interface{}) bool {
@@ -30,19 +43,6 @@ func MakePing(address string) []byte {
 		Address: address,
 	}
 	data, err := json.Marshal(ping)
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	return data
-}
-
-func MakePong(address string) []byte {
-	pong := &RPC{
-		RPC:     "PONG",
-		Address: address,
-	}
-	data, err := json.Marshal(pong)
 	if err != nil {
 		fmt.Println(err)
 		return nil
