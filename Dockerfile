@@ -8,5 +8,4 @@ WORKDIR /app/cmd
 RUN go build -o /kadlab
 RUN chmod +x /kadlab
 #CMD ["./kademlia"]
-#CMD [ "/kadlab" ]
-RUN chmod +x /kadlab
+CMD [ "/kadlab" ]

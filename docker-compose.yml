@@ -13,11 +13,7 @@ services:
     tty: true
     deploy:
       mode: replicated
-<<<<<<< HEAD
-      replicas: 50  
-=======
       replicas: 2
->>>>>>> 90c673eda2bf4e4e6b675ac7b6d93f6fe763e45e
 #        resources:
 #           limits:
 #              cpus: "0.1"
