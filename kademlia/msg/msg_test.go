@@ -27,5 +27,5 @@ func TestDecodeRPC(t *testing.T) {
 		t.Error("Struct not viable")
 	}
 	decoded := DecodeRPC(data)
-	assert.True(t, TestRPC(decoded), "TestDecodeRPC()")
+	assert.True(t, TestRPC(decoded), "DecodeRPC() error")
 }

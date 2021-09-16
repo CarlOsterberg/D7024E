@@ -7,22 +7,8 @@ import (
 
 //TODO add kademlia id
 type RPC struct {
-	RPC string
-	//uuid *uuid.UUID
+	RPC     string
 	Address string
-}
-
-func MakePong(address string) []byte {
-	pong := &RPC{
-		RPC:     "PONG",
-		Address: address,
-	}
-	data, err := json.Marshal(pong)
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	return data
 }
 
 func TestRPC(x interface{}) bool {
@@ -37,12 +23,24 @@ func TestRPC(x interface{}) bool {
 }
 
 func MakePing(address string) []byte {
-	//u, _ := uuid.NewV4()
 	ping := &RPC{
 		RPC:     "PING",
 		Address: address,
 	}
 	data, err := json.Marshal(ping)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	return data
+}
+
+func MakePong(address string) []byte {
+	pong := &RPC{
+		RPC:     "PONG",
+		Address: address,
+	}
+	data, err := json.Marshal(pong)
 	if err != nil {
 		fmt.Println(err)
 		return nil

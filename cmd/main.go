@@ -4,17 +4,24 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"program/kademlia"
+	k "program/kademlia"
+	"program/kademlia/msg"
 	"program/udp"
 	"strings"
+	"time"
 )
 
 func main() {
-	ntwrk := kademlia.Network{}
-	go ntwrk.Listen("0.0.0.0", 1234)
-	ntwrk.Self = udp.GetOutboundIP().String() + ":1234"
+	port := "1234"
+	address := udp.GetOutboundIP().String() + ":" + port
+	me := k.NewContact(k.NewRandomKademliaID(), address)
+	serverCh := make(chan msg.RPC, 50)
+	cliCh := make(chan string, 50)
+	node := k.NewKademlia(me, serverCh)
+	go k.Run(*node, cliCh)
 	reader := bufio.NewReader(os.Stdin)
 	run := true
+	time.Sleep(time.Duration(1000) * time.Millisecond)
 	for run {
 		fmt.Print("-> ")
 		text, _ := reader.ReadString('\n')
@@ -27,16 +34,7 @@ func main() {
 			fmt.Print("Address: ")
 			address, _ := reader.ReadString('\n')
 			address = strings.Replace(address, "\n", "", -1)
-			contact := kademlia.NewContact(kademlia.NewRandomKademliaID(), address)
-			ntwrk.SendPingMessage(&contact)
-		case "send":
-			fmt.Print("Address: ")
-			ip, _ := reader.ReadString('\n')
-			ip = strings.Replace(ip, "\n", "", -1)
-			fmt.Print("Msg: ")
-			msg, _ := reader.ReadString('\n')
-			msg = strings.Replace(msg, "\n", "", -1)
-			udp.Client(ip, msg)
+			cliCh <- "ping|" + address
 		default:
 			fmt.Printf("Not a command\n")
 		}
