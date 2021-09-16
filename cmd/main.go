@@ -4,11 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	//json "github.com/CarlOsterberg/D7024E/kademlia/json"
-	//kademlia "github.com/CarlOsterberg/D7024E/kademlia"
-	//udp "github.com/CarlOsterberg/D7024E/udp"
-	kademlia "program/kademlia"
-	udp "program/udp"
+	"program/kademlia"
+	"program/udp"
 	"strings"
 )
 
