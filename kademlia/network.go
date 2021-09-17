@@ -3,15 +3,14 @@ package kademlia
 import (
 	"bytes"
 	"fmt"
-	//"github.com/nu7hatch/gouuid" //u, err := uuid.NewV4()
 	"log"
-	"net"
 	"program/kademlia/msg"
 	"program/udp"
 )
 
 type Network struct {
-	Self string
+	Self    string
+	RecvRPC chan msg.RPC
 }
 
 func (network *Network) Listen(ip string, port int) {
@@ -21,40 +20,31 @@ func (network *Network) Listen(ip string, port int) {
 		log.Fatal(err)
 		return
 	}
+	fmt.Println("Server running")
 	for {
-		_, remoteaddr, err := server.ReadFromUDP(buffer)
+		_, _, err := server.ReadFromUDP(buffer)
 		n := bytes.IndexByte(buffer[:], 0)
 		data := buffer[:n]
-		fmt.Printf("%v\n", string(data))
 		if err != nil {
 			fmt.Printf("Some error  %v", err)
 			continue
 		}
-		go network.handleRPC(server, remoteaddr, data)
+		go network.decode(data)
 	}
 }
 
-func (network *Network) handleRPC(conn *net.UDPConn, addr *net.UDPAddr, data []byte) {
-	bytes := msg.DecodeRPC(data)
-	if bytes != nil {
-		switch bytes.RPC {
-		case "PING":
-			_, err := conn.WriteToUDP(
-				msg.MakePong(network.Self),
-				addr,
-			)
-			if err != nil {
-				fmt.Println(err)
-			}
-		default:
-			//todo
-		}
+func (network *Network) decode(data []byte) {
+	decodedMsg := msg.DecodeRPC(data)
+	if decodedMsg != nil {
+		network.RecvRPC <- *decodedMsg
+	} else {
+		fmt.Println("Msg not valid")
 	}
 }
 
 func (network *Network) SendPingMessage(contact *Contact) {
 	msg := msg.MakePing(contact.Address)
-	udp.Client(contact.Address, string(msg))
+	udp.Client(contact.Address, msg)
 }
 
 func (network *Network) SendFindContactMessage(contact *Contact) {
