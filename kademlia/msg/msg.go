@@ -10,6 +10,8 @@ type RPC struct {
 	RPC string
 	//uuid *uuid.UUID
 	Address string
+	Key string
+	Value string
 }
 
 func MakePong(address string) []byte {
