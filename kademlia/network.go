@@ -43,8 +43,8 @@ func (network *Network) decode(data []byte) {
 }
 
 func (network *Network) SendPingMessage(contact *Contact) {
-	msg := msg.MakePing(contact.Address)
-	udp.Client(contact.Address, msg)
+	message := msg.MakePing(contact.Address)
+	udp.Client(contact.Address, message)
 }
 
 func (network *Network) SendFindContactMessage(contact *Contact) {

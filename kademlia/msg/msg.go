@@ -5,7 +5,8 @@ import (
 	"fmt"
 )
 
-//TODO add kademlia id
+//If a field is added make sure all the test works afterwards,
+//should be fixed by adding the empty field of the new field to the test json object
 type RPC struct {
 	RPC     string
 	Address string
