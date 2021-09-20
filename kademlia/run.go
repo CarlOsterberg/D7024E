@@ -18,6 +18,9 @@ func Run(state Kademlia, cliCh chan string) {
 					udp.Client(recv.Address, msg.MakePong(state.network.Self))
 				case "PONG":
 					fmt.Println(recv)
+				case "STORE":
+					fmt.Println(recv)
+					state.Store(recv.StoreValue)
 				}
 			} else {
 				fmt.Println("Channel closed")

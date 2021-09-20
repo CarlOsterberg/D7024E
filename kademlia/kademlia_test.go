@@ -3,13 +3,15 @@ package kademlia
 import (
 	"crypto/sha1"
 	"fmt"
+	"program/kademlia/msg"
 	"testing"
 )
 
 // TestHelloName calls greetings.Hello with a name, checking
 // for a valid return value.
 func TestKademlia_Store(t *testing.T) {
-	var testkad = NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"))
+	var serverCh = make(chan msg.RPC, 50)
+	var testkad = NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"), serverCh)
 	key :=  sha1.New()
 	key.Write([]byte("nej men va fan"))
 	testkad.Store([]byte("nej men va fan"))
