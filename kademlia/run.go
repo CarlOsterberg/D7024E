@@ -8,6 +8,11 @@ import (
 )
 
 func Run(state Kademlia, cliCh chan string) {
+	if udp.GetOutboundIP().String() != "172.20.0.2" {
+		ip := "172.20.0.2:1234"
+		public := NewContact(NewSha1KademliaID([]byte(ip)), ip)
+		state.routingTable.AddContact(public)
+	}
 	for {
 		select {
 		case recv, serverChStatus := <-state.network.RecvRPC:
@@ -29,8 +34,18 @@ func Run(state Kademlia, cliCh chan string) {
 		case cliInst, cliChStatus := <-cliCh:
 			if cliChStatus {
 				n := strings.Index(cliInst, "|")
-				reciever := NewContact(NewRandomKademliaID(), cliInst[n+1:])
-				state.network.SendPingMessage(&reciever)
+				switch cliInst[:n] {
+				case "ping":
+					reciever := NewContact(NewRandomKademliaID(), cliInst[n+1:])
+					state.network.SendPingMessage(&reciever)
+				case "find closest":
+					contacts := state.routingTable.FindClosestContacts(state.routingTable.me.ID, 1)
+					for i := range contacts {
+						fmt.Println(contacts[i].String())
+					}
+				default:
+					fmt.Println("Unknown command")
+				}
 			} else {
 				fmt.Println("Channel closed")
 			}

@@ -14,7 +14,7 @@ import (
 func main() {
 	port := "1234"
 	address := udp.GetOutboundIP().String() + ":" + port
-	me := k.NewContact(k.NewRandomKademliaID(), address)
+	me := k.NewContact(k.NewSha1KademliaID([]byte(address)), address)
 	serverCh := make(chan msg.RPC, 50)
 	cliCh := make(chan string, 50)
 	node := k.NewKademlia(me, serverCh)
@@ -35,6 +35,8 @@ func main() {
 			address, _ := reader.ReadString('\n')
 			address = strings.Replace(address, "\n", "", -1)
 			cliCh <- "ping|" + address
+		case "find closest":
+			cliCh <- "find closest|"
 		default:
 			fmt.Printf("Not a command\n")
 		}

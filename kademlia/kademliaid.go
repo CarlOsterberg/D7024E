@@ -1,6 +1,7 @@
 package kademlia
 
 import (
+	"crypto/sha1"
 	"encoding/hex"
 	"math/rand"
 )
@@ -20,6 +21,17 @@ func NewKademliaID(data string) *KademliaID {
 		newKademliaID[i] = decoded[i]
 	}
 
+	return &newKademliaID
+}
+
+func NewSha1KademliaID(data []byte) *KademliaID {
+	newKademliaID := KademliaID{}
+	key := sha1.New()
+	key.Write(data)
+	id := key.Sum(nil)
+	for i := 0; i < IDLength; i++ {
+		newKademliaID[i] = id[i]
+	}
 	return &newKademliaID
 }
 
