@@ -2,6 +2,7 @@ package kademlia
 
 import (
 	"fmt"
+	"program/kademlia/msg"
 	"testing"
 )
 
@@ -22,7 +23,8 @@ func TestRoutingTable(t *testing.T) {
 }
 
 func TestKClosest1(t *testing.T){
-	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"))
+	serverCh := make(chan msg.RPC, 50)
+	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"), serverCh)
 
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8001"))
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("1111111100000000000000000000000000000000"), "localhost:8002"))
@@ -44,7 +46,8 @@ func TestKClosest1(t *testing.T){
 }
 
 func TestKClosest2(t *testing.T){
-	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"))
+	serverCh := make(chan msg.RPC, 50)
+	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"), serverCh)
 
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8001"))
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("1111111100000000000000000000000000000000"), "localhost:8002"))

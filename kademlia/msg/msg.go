@@ -9,6 +9,8 @@ import (
 type RPC struct {
 	RPC     string
 	Address string
+	Key string
+	Value string
 }
 
 func TestRPC(x interface{}) bool {
