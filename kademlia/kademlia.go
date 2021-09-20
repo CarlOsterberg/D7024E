@@ -14,6 +14,7 @@ type Kademlia struct {
 	routingTable RoutingTable
 	valueMap     map[string][]byte
 	network      Network
+	responseMap  map[string]string
 }
 
 func NewKademlia(me Contact, ch chan msg.RPC) *Kademlia {
@@ -40,6 +41,8 @@ func (kademlia *Kademlia) LookupContact(target *Contact) {
 	for i := 0; i < len(closestContacts); i++ {
 		kademlia.network.SendFindContactMessage(&closestContacts[i])
 	}
+
+	//u, err := uuid.NewV4()
 }
 
 // KClosestNodes Finds the k closest nodes to the target
