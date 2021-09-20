@@ -10,8 +10,9 @@ import (
 type RPC struct {
 	RPC     string
 	Address string
-	Key     string
-	Value   string
+	TargetID string
+	Key string
+	Value string
 }
 
 func TestRPC(x interface{}) bool {
@@ -38,6 +39,10 @@ func MakePing(address string) []byte {
 	return data
 }
 
+
+
+
+
 func MakePong(address string) []byte {
 	pong := &RPC{
 		RPC:     "PONG",
@@ -45,6 +50,20 @@ func MakePong(address string) []byte {
 	}
 	data, err := json.Marshal(pong)
 	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	return data
+}
+
+func MakeFindContact(address string, target string) []byte {
+	findContact := &RPC{
+		RPC: "FIND_CONTACT",
+		Address: address,
+		TargetID: target,
+	}
+	data, err := json.Marshal(findContact)
+	if err != nil{
 		fmt.Println(err)
 		return nil
 	}
