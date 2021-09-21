@@ -8,13 +8,13 @@ import (
 
 func TestMakePing(t *testing.T) {
 	formatted := MakePing("12.34.56.78:1234")
-	correct := []byte("{\"RPC\":\"PING\",\"Address\":\"12.34.56.78:1234\",\"Key\":\"\",\"Value\":\"\"}")
+	correct := []byte("{\"RPC\":\"PING\",\"Address\":\"12.34.56.78:1234\",\"TargetID\":\"\",\"Key\":\"\",\"Value\":\"\"}")
 	assert.Equal(t, formatted, correct, "MakePing() error")
 }
 
 func TestMakePong(t *testing.T) {
 	formatted := MakePong("12.34.56.78:1234")
-	correct := []byte("{\"RPC\":\"PONG\",\"Address\":\"12.34.56.78:1234\",\"Key\":\"\",\"Value\":\"\"}")
+	correct := []byte("{\"RPC\":\"PONG\",\"Address\":\"12.34.56.78:1234\",\"TargetID\":\"\",\"Key\":\"\",\"TargetID\":\"\",\"Value\":\"\"}")
 	assert.Equal(t, formatted, correct, "MakePong() error")
 }
 

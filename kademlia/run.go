@@ -23,6 +23,15 @@ func Run(state Kademlia, cliCh chan string) {
 					udp.Client(recv.Address, msg.MakePong(state.network.Self))
 				case "PONG":
 					fmt.Println(recv)
+				case "FIND_CONTACT":
+					//Find the k closest nodes and send them back
+					kadID := NewKademliaID(recv.TargetID)
+					target := NewContact(kadID, "")
+					contacts := state.KClosestNodes(&target)
+					response := msg.MakeFindContactResponse(state.network.Self, contacts)
+					udp.Client(recv.Address, response)
+				case "FIND_CONTACT_RESPONSE":
+					
 				}
 			} else {
 				fmt.Println("Channel closed")
