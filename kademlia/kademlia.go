@@ -14,6 +14,7 @@ type Kademlia struct {
 	routingTable RoutingTable
 	valueMap     map[string][]byte
 	network      Network
+	sentID       map[string]LookUp
 }
 
 func NewKademlia(me Contact, ch chan msg.RPC) *Kademlia {
@@ -30,6 +31,8 @@ func NewKademlia(me Contact, ch chan msg.RPC) *Kademlia {
 	go kademlia.network.Listen("0.0.0.0", port)
 	valueMap := make(map[string][]byte)
 	kademlia.valueMap = valueMap
+	sentid := make(map[string]LookUp)
+	kademlia.sentID = sentid
 	return kademlia
 }
 
