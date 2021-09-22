@@ -20,3 +20,6 @@ jobs:
 
     - name: Build
       run: go build -v ./cmd/main.go
+
+    - name: Test msg
+      run: go test -v ./kademlia/msg/msg_test.go
