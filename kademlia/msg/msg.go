@@ -2,9 +2,7 @@ package msg
 
 import (
 	"encoding/json"
-	"fmt"
-	"program/kademlia"
-)
+	"fmt")
 
 //If a field is added make sure all the test works afterwards,
 //should be fixed by adding the empty field of the new field to the test json object
@@ -14,7 +12,7 @@ type RPC struct {
 	TargetID string
 	Key string
 	Value string
-	Contacts []kademlia.Contact
+	Contacts []string
 }
 
 func TestRPC(x interface{}) bool {
@@ -72,7 +70,7 @@ func MakeFindContact(address string, target string) []byte {
 	return data
 }
 
-func MakeFindContactResponse(address string, list []kademlia.Contact) []byte{
+func MakeFindContactResponse(address string, list []string) []byte{
 	findContactResponse := &RPC{
 		RPC: "FIND_CONTACT_RESPONSE",
 		Address: address,

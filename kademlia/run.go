@@ -28,10 +28,14 @@ func Run(state Kademlia, cliCh chan string) {
 					kadID := NewKademliaID(recv.TargetID)
 					target := NewContact(kadID, "")
 					contacts := state.KClosestNodes(&target)
-					response := msg.MakeFindContactResponse(state.network.Self, contacts)
+					var addressList []string
+					for _, v := range contacts{
+						addressList = append(addressList, v.Address)
+					}
+					response := msg.MakeFindContactResponse(state.network.Self, addressList)
 					udp.Client(recv.Address, response)
 				case "FIND_CONTACT_RESPONSE":
-					
+
 				}
 			} else {
 				fmt.Println("Channel closed")
