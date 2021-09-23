@@ -37,6 +37,8 @@ func main() {
 			cliCh <- "ping|" + address
 		case "find closest":
 			cliCh <- "find closest|"
+		case "print buckets":
+			cliCh <- "print buckets|"
 		default:
 			fmt.Printf("Not a command\n")
 		}
