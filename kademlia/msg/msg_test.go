@@ -30,6 +30,36 @@ func TestMakePong(t *testing.T) {
 	assert.Equal(t, decodedFormatted, correct, "MakePong() error")
 }
 
+func TestMakeFindContact(t *testing.T) {
+	u, _ := uuid.NewV4()
+	formatted := MakeFindContact("12.34.56.78:1234", "00000000000000000000", *u)
+	correct := &RPC{
+		RPC: "FIND_CONTACT",
+		ConvID: *u,
+		Address: "12.34.56.78:1234",
+		TargetID: "00000000000000000000",
+	}
+	decodedFormatted := DecodeRPC(formatted)
+	assert.Equal(t, decodedFormatted, correct, "MakeFindContactError")
+}
+
+func TestMakeFindContactResponse(t *testing.T) {
+	u, _ := uuid.NewV4()
+	var idList []string
+	idList = append(idList, "hello")
+	idList = append(idList, "ok")
+	formatted := MakeFindContactResponse("12.34.56.78:1234", idList, "00000000000000000000", *u)
+	correct := &RPC{
+		RPC: "FIND_CONTACT_RESPONSE",
+		ConvID: *u,
+		Address: "12.34.56.78:1234",
+		Contacts: idList,
+		TargetID: "00000000000000000000",
+	}
+	decodedFormatted := DecodeRPC(formatted)
+	assert.Equal(t, decodedFormatted, correct, "MakeFindContactError")
+}
+
 func TestDecodeRPC(t *testing.T) {
 	obj := RPC{
 		Address: "0.0.0.0:1234",

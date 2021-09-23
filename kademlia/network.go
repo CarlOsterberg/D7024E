@@ -48,9 +48,9 @@ func (network *Network) SendPingMessage(contact *Contact) {
 }
 
 func (network *Network) SendFindContactMessage(contact *Contact) {
-	targetID := contact.ID.String()
-	msg := msg.MakeFindContact(contact.Address, targetID)
-	udp.Client(contact.Address, msg)
+	//targetID := contact.ID.String()
+	//msg := msg.MakeFindContact(contact.Address, targetID)
+	//udp.Client(contact.Address, msg)
 
 }
 
