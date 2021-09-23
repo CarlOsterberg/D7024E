@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestInsert1(t *testing.T){
+func TestInsert1(t *testing.T) {
 
 	rl := NewResultList(5)
 
@@ -18,25 +18,22 @@ func TestInsert1(t *testing.T){
 	id5 := NewKademliaID("FFFFFFFF00000000000000000000000000000005")
 	id6 := NewKademliaID("FFFFFFFF00000000000000000000000000000006")
 
+	rl.Insert(NewContact(id1, "localhost"), *target)
+	rl.Insert(NewContact(id2, "localhost"), *target)
+	rl.Insert(NewContact(id3, "localhost"), *target)
+	rl.Insert(NewContact(id4, "localhost"), *target)
+	rl.Insert(NewContact(id5, "localhost"), *target)
+	rl.Insert(NewContact(id6, "localhost"), *target)
 
-	rl.Insert(*id1, *target)
-	rl.Insert(*id2, *target)
-	rl.Insert(*id3, *target)
-	rl.Insert(*id4, *target)
-	rl.Insert(*id5, *target)
-	rl.Insert(*id6, *target)
-
-	for _, v := range rl.List{
-		fmt.Println(v)
+	for _, v := range rl.List {
+		fmt.Println(v.ID)
 	}
-
-
 
 }
 
-func TestMerge(t *testing.T){
+func TestMerge(t *testing.T) {
 	rl1 := NewResultList(3)
-	rl2 := NewResultList( 3)
+	rl2 := NewResultList(3)
 
 	target := NewKademliaID("FFFFFFFF00000000000000000000000000000001")
 
@@ -47,18 +44,17 @@ func TestMerge(t *testing.T){
 	id5 := NewKademliaID("FFFFFFFF00000000000000000000000000000005")
 	id6 := NewKademliaID("FFFFFFFF00000000000000000000000000000006")
 
-	rl1.Insert(*id1, *target)
-	rl1.Insert(*id2, *target)
-	rl1.Insert(*id3, *target)
-	rl2.Insert(*id4, *target)
-	rl1.Insert(*id5, *target)
-	rl1.Insert(*id6, *target)
+	rl1.Insert(NewContact(id1, "localhost"), *target)
+	rl1.Insert(NewContact(id2, "localhost"), *target)
+	rl1.Insert(NewContact(id3, "localhost"), *target)
+	rl2.Insert(NewContact(id4, "localhost"), *target)
+	rl2.Insert(NewContact(id5, "localhost"), *target)
+	rl2.Insert(NewContact(id6, "localhost"), *target)
 
 	rl1.Merge(rl2, *target)
 
-	for _, v := range rl1.List{
-		fmt.Println(v)
+	for _, v := range rl1.List {
+		fmt.Println(v.ID)
 	}
 
 }
-
