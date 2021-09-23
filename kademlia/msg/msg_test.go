@@ -12,7 +12,7 @@ func TestMakePing(t *testing.T) {
 	decodedFormatted := DecodeRPC(formatted)
 	correct := &RPC{
 		RPC:     "PING",
-		MsgID:   decodedFormatted.MsgID,
+		ConvID:  decodedFormatted.ConvID,
 		Address: "12.34.56.78:1234",
 	}
 	assert.Equal(t, decodedFormatted, correct, "MakePing() error")
@@ -23,7 +23,7 @@ func TestMakePong(t *testing.T) {
 	formatted := MakePong("12.34.56.78:1234", *u)
 	correct := &RPC{
 		RPC:     "PONG",
-		MsgID:   *u,
+		ConvID:  *u,
 		Address: "12.34.56.78:1234",
 	}
 	decodedFormatted := DecodeRPC(formatted)

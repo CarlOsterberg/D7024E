@@ -39,6 +39,11 @@ func main() {
 			cliCh <- "find closest|"
 		case "print buckets":
 			cliCh <- "print buckets|"
+		case "add contact":
+			fmt.Print("Address: ")
+			address, _ := reader.ReadString('\n')
+			address = strings.Replace(address, "\n", "", -1)
+			cliCh <- "add contact|" + address
 		default:
 			fmt.Printf("Not a command\n")
 		}
