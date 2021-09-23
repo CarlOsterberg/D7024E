@@ -20,7 +20,7 @@ func Run(state Kademlia, cliCh chan string) {
 				switch recv.RPC {
 				case "PING":
 					fmt.Println(recv)
-					udp.Client(recv.Address, msg.MakePong(state.network.Self))
+					udp.Client(recv.Address, msg.MakePong(state.network.Self, recv.MsgID))
 				case "PONG":
 					fmt.Println(recv)
 				case "FIND_CONTACT":
@@ -29,7 +29,7 @@ func Run(state Kademlia, cliCh chan string) {
 					target := NewContact(kadID, "")
 					contacts := state.KClosestNodes(&target)
 					var addressList []string
-					for _, v := range contacts{
+					for _, v := range contacts {
 						addressList = append(addressList, v.Address)
 					}
 					response := msg.MakeFindContactResponse(state.network.Self, addressList)
