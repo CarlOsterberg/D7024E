@@ -97,12 +97,18 @@ func Run(state Kademlia, cliCh chan string) {
 						//All contacts have responded, we are done
 						if lookup.rpctype == "STORE" {
 							//Instruct the nodes to store
+							for _, v := range lookup.klist.List{
+								state.network.SendStoreMessage(lookup.value, v.Address)
+							}
 						}
 						if lookup.rpctype == "JOIN" {
 
 						}
 
-						//TODO delete from map when done
+
+						//Delete the lookup when we are done with the conversation
+						delete(state.convIDMap, recv.ConvID)
+
 					}
 
 				case "STORE":
