@@ -33,7 +33,7 @@ func Run(state Kademlia, cliCh chan string) {
 					for _, v := range contacts {
 						addressList = append(addressList, v.Address)
 					}
-					response := msg.MakeFindContactResponse(state.network.Self, addressList)
+					response := msg.MakeFindContactResponse(state.network.Self, addressList, recv.TargetID, recv.ConvID)
 					udp.Client(recv.Address, response)
 				case "FIND_CONTACT_RESPONSE":
 					lookup := state.convIDMap[recv.ConvID]
@@ -64,7 +64,7 @@ func Run(state Kademlia, cliCh chan string) {
 						if _, ok := lookup.sentmap[v.ID.String()]; !ok{
 							//if nil
 							//Send find node
-							rpc := msg.MakeFindContact(state.network.Self, targetID.String())
+							rpc := msg.MakeFindContact(state.network.Self, targetID.String(), recv.ConvID)
 							udp.Client(v.Address, rpc)
 							lookup.sentmap[v.ID.String()] = false //No response yet
 							count++
@@ -79,7 +79,7 @@ func Run(state Kademlia, cliCh chan string) {
 					done := false
 					count = 0
 					for _, v := range lookup.klist.List {
-						if ok, v := lookup.sentmap[v.ID.String()]; ok && v{
+						if v, ok := lookup.sentmap[v.ID.String()]; ok && v{
 							continue
 						} else {
 							count++
@@ -97,7 +97,7 @@ func Run(state Kademlia, cliCh chan string) {
 						}
 
 
-						//TODO delete
+						//TODO delete from map when done
 					}
 
 				}

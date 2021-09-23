@@ -59,11 +59,12 @@ func MakePong(address string, msgID uuid.UUID) []byte {
 	return data
 }
 
-func MakeFindContact(address string, target string) []byte {
+func MakeFindContact(address string, target string, msgID uuid.UUID) []byte {
 	findContact := &RPC{
 		RPC:      "FIND_CONTACT",
 		Address:  address,
 		TargetID: target,
+		ConvID: msgID,
 	}
 	data, err := json.Marshal(findContact)
 	if err != nil {
@@ -73,11 +74,13 @@ func MakeFindContact(address string, target string) []byte {
 	return data
 }
 
-func MakeFindContactResponse(address string, list []string) []byte {
+func MakeFindContactResponse(address string, list []string, target string, msgID uuid.UUID) []byte {
 	findContactResponse := &RPC{
 		RPC:      "FIND_CONTACT_RESPONSE",
 		Address:  address,
 		Contacts: list,
+		TargetID: target,
+		ConvID: msgID,
 	}
 	data, err := json.Marshal(findContactResponse)
 	if err != nil {
