@@ -2,24 +2,28 @@ package msg
 
 import (
 	"encoding/json"
+	uuid "github.com/nu7hatch/gouuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestMakePing(t *testing.T) {
 	formatted := MakePing("12.34.56.78:1234")
+	decodedFormatted := DecodeRPC(formatted)
 	correct := &RPC{
 		RPC:     "PING",
+		MsgID:   decodedFormatted.MsgID,
 		Address: "12.34.56.78:1234",
 	}
-	decodedFormatted := DecodeRPC(formatted)
 	assert.Equal(t, decodedFormatted, correct, "MakePing() error")
 }
 
 func TestMakePong(t *testing.T) {
-	formatted := MakePong("12.34.56.78:1234")
+	u, _ := uuid.NewV4()
+	formatted := MakePong("12.34.56.78:1234", *u)
 	correct := &RPC{
 		RPC:     "PONG",
+		MsgID:   *u,
 		Address: "12.34.56.78:1234",
 	}
 	decodedFormatted := DecodeRPC(formatted)
