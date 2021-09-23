@@ -2,7 +2,6 @@ package kademlia
 
 import (
 	"bytes"
-	"crypto/sha1"
 	"fmt"
 	"log"
 	"program/kademlia/msg"
@@ -59,10 +58,7 @@ func (network *Network) SendFindDataMessage(hash string) {
 	// TODO
 }
 
-func (network *Network) SendStoreMessage(data []byte) {
-	storeid := sha1.New()
-	storeid.Write(data)
-	//node lookup on id
-	//skicka store request till hela listan som hittas
-	//msg.MakeStore()
+func (network *Network) SendStoreMessage(data []byte, addres string) {
+	storeMessage := msg.MakeStore(data)
+	udp.Client(addres, storeMessage)
 }
