@@ -18,6 +18,8 @@ func Run(state Kademlia, cliCh chan string) {
 		select {
 		case recv, serverChStatus := <-state.network.RecvRPC:
 			if serverChStatus {
+				conid := NewSha1KademliaID([]byte(recv.Address))
+				state.routingTable.AddContact(NewContact(conid, recv.Address))
 				switch recv.RPC {
 				case "PING":
 					fmt.Println(recv)
@@ -95,6 +97,9 @@ func Run(state Kademlia, cliCh chan string) {
 						//All contacts have responded, we are done
 						if lookup.rpctype == "STORE" {
 							//Instruct the nodes to store
+						}
+						if lookup.rpctype == "JOIN" {
+
 						}
 
 						//TODO delete from map when done
