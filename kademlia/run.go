@@ -99,6 +99,9 @@ func Run(state Kademlia, cliCh chan string) {
 						//TODO delete
 					}
 
+				case "STORE":
+					fmt.Println(recv)
+					state.Store(recv.StoreValue)
 				}
 			} else {
 				fmt.Println("Channel closed")

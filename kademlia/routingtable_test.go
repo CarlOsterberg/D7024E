@@ -46,6 +46,7 @@ func TestKClosest1(t *testing.T){
 }
 
 func TestKClosest2(t *testing.T){
+
 	serverCh := make(chan msg.RPC, 50)
 	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"), serverCh)
 

@@ -9,13 +9,14 @@ import (
 //If a field is added make sure all the test works afterwards,
 //should be fixed by adding the empty field of the new field to the test json object
 type RPC struct {
-	RPC      string
-	Address  string
-	TargetID string
-	Key      string
-	Value    string
-	Contacts []string
-	ConvID   uuid.UUID
+	RPC        string
+	Address    string
+	TargetID   string
+	Key        string
+	Value      string
+	Contacts   []string
+	ConvID     uuid.UUID
+	StoreValue []byte
 }
 
 func TestRPC(x interface{}) bool {
@@ -79,6 +80,18 @@ func MakeFindContactResponse(address string, list []string) []byte {
 		Contacts: list,
 	}
 	data, err := json.Marshal(findContactResponse)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	return data
+}
+func MakeStore(storeData []byte) []byte {
+	store := &RPC{
+		RPC:        "STORE",
+		StoreValue: storeData,
+	}
+	data, err := json.Marshal(store)
 	if err != nil {
 		fmt.Println(err)
 		return nil

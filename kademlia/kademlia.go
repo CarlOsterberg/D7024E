@@ -53,7 +53,6 @@ func (kademlia *Kademlia) KClosestNodes(target *Contact) []Contact {
 }
 
 func (kademlia *Kademlia) LookupData(hash string) []byte {
-
 	//fmt.Println("map:", string(kademlia.valueMap[hash]))
 	return kademlia.valueMap[hash]
 }

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestInsert1(t *testing.T){
+func TestInsert1(t *testing.T) {
 
 	rl := NewResultList(5)
 
@@ -18,7 +18,6 @@ func TestInsert1(t *testing.T){
 	id5 := NewKademliaID("FFFFFFFF00000000000000000000000000000005")
 	id6 := NewKademliaID("FFFFFFFF00000000000000000000000000000006")
 
-
 	rl.Insert(NewContact(id1, "localhost"), *target)
 	rl.Insert(NewContact(id2, "localhost"), *target)
 	rl.Insert(NewContact(id3, "localhost"), *target)
@@ -26,17 +25,15 @@ func TestInsert1(t *testing.T){
 	rl.Insert(NewContact(id5, "localhost"), *target)
 	rl.Insert(NewContact(id6, "localhost"), *target)
 
-	for _, v := range rl.List{
+	for _, v := range rl.List {
 		fmt.Println(v.ID)
 	}
 
-
-
 }
 
-func TestMerge(t *testing.T){
+func TestMerge(t *testing.T) {
 	rl1 := NewResultList(3)
-	rl2 := NewResultList( 3)
+	rl2 := NewResultList(3)
 
 	target := NewKademliaID("FFFFFFFF00000000000000000000000000000001")
 
@@ -56,9 +53,8 @@ func TestMerge(t *testing.T){
 
 	rl1.Merge(rl2, *target)
 
-	for _, v := range rl1.List{
+	for _, v := range rl1.List {
 		fmt.Println(v.ID)
 	}
 
 }
-

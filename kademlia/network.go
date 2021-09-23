@@ -58,6 +58,7 @@ func (network *Network) SendFindDataMessage(hash string) {
 	// TODO
 }
 
-func (network *Network) SendStoreMessage(data []byte) {
-	// TODO
+func (network *Network) SendStoreMessage(data []byte, addres string) {
+	storeMessage := msg.MakeStore(data)
+	udp.Client(addres, storeMessage)
 }
