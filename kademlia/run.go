@@ -1,6 +1,7 @@
 package kademlia
 
 import (
+	"crypto/sha1"
 	"fmt"
 	"program/kademlia/msg"
 	"program/udp"
@@ -35,10 +36,22 @@ func Run(state Kademlia, cliCh chan string) {
 					response := msg.MakeFindContactResponse(state.network.Self, addressList)
 					udp.Client(recv.Address, response)
 				case "FIND_CONTACT_RESPONSE":
-					//lookup := state.convIDMap[recv.ConvID]
-					//addrList := recv.Contacts
-					//lookup.klist.Merge()
-
+					lookup := state.convIDMap[recv.ConvID]
+					addrList := recv.Contacts
+					contactList := NewResultList(k)
+					targetID := NewKademliaID(recv.TargetID)
+					for _, v := range addrList{
+						//Hash the addresses and insert contacts into a list
+						key := sha1.New()
+						key.Write([]byte(v))
+						id := string(key.Sum(nil))
+						kadID := NewKademliaID(id)
+						contact := NewContact(kadID, v)
+						contactList.Insert(contact, *targetID)
+					}
+					//Merge new contacts into old list and update map
+					lookup.klist.Merge(contactList, *targetID)
+					state.convIDMap[recv.ConvID] = lookup
 				}
 			} else {
 				fmt.Println("Channel closed")
