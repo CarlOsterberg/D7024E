@@ -61,21 +61,43 @@ func Run(state Kademlia, cliCh chan string) {
 					//k new find_nodes need to be sent
 					count := 0
 					for _, v := range lookup.klist.List {
-						if !lookup.sentmap[v.ID.String()]{
+						if _, ok := lookup.sentmap[v.ID.String()]; !ok{
+							//if nil
 							//Send find node
 							rpc := msg.MakeFindContact(state.network.Self, targetID.String())
 							udp.Client(v.Address, rpc)
+							lookup.sentmap[v.ID.String()] = false //No response yet
 							count++
 						}
 						if count >= alpha{
 							break
 						}
 					}
-					if count == 0{
+
+					state.convIDMap[recv.ConvID] = lookup //Update map before checking if done
+
+					done := false
+					count = 0
+					for _, v := range lookup.klist.List {
+						if ok, v := lookup.sentmap[v.ID.String()]; ok && v{
+							continue
+						} else {
+							count++
+						}
+					}
+
+					if count == 0 {
+						done = true
+					}
+
+					if done{
 						//All contacts have responded, we are done
 						if lookup.rpctype == "STORE"{
 							//Instruct the nodes to store
 						}
+
+
+						//TODO delete
 					}
 
 				}
