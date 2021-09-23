@@ -97,14 +97,16 @@ func Run(state Kademlia, cliCh chan string) {
 						//All contacts have responded, we are done
 						if lookup.rpctype == "STORE" {
 							//Instruct the nodes to store
-							for _, v := range lookup.klist.List{
+							for _, v := range lookup.klist.List {
 								state.network.SendStoreMessage(lookup.value, v.Address)
 							}
 						}
 						if lookup.rpctype == "JOIN" {
-
+							for _, v := range lookup.klist.List {
+								joinid := NewSha1KademliaID([]byte(v.Address))
+								state.routingTable.AddContact(NewContact(joinid, v.Address))
+							}
 						}
-
 
 						//Delete the lookup when we are done with the conversation
 						delete(state.convIDMap, recv.ConvID)
