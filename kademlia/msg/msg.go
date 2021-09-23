@@ -16,6 +16,7 @@ type RPC struct {
 	Key      string
 	Value    string
 	Contacts []string
+	ConvID   uuid.UUID
 }
 
 func TestRPC(x interface{}) bool {

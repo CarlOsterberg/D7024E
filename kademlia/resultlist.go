@@ -2,7 +2,7 @@ package kademlia
 
 //ResultList keeps a list of KademliaID with a max size
 type ResultList struct {
-	List []KademliaID
+	List []Contact
 	Size int
 }
 
@@ -13,18 +13,18 @@ func NewResultList(size int) *ResultList {
 }
 
 //Insert tries to insert an id to the list. If it is better than an existing element it will replace the worst one.
-func (resultList *ResultList) Insert(id KademliaID, target KademliaID) {
+func (resultList *ResultList) Insert(contact Contact, target KademliaID) {
 	shouldInsert := false
 	var worstIdx int
 	var worstDistance *KademliaID
-	idDistance := id.CalcDistance(&target)
+	idDistance := contact.ID.CalcDistance(&target)
 
 	if len(resultList.List) < resultList.Size {
-		resultList.List = append(resultList.List, id)
+		resultList.List = append(resultList.List, contact)
 		return
 	}
 	for i, v := range resultList.List {
-		dist := v.CalcDistance(&target)
+		dist := v.ID.CalcDistance(&target)
 		//One of the elements are worse than id
 		if dist.Less(idDistance) && !shouldInsert {
 			shouldInsert = true
@@ -37,7 +37,7 @@ func (resultList *ResultList) Insert(id KademliaID, target KademliaID) {
 	}
 
 	if shouldInsert {
-		resultList.List[worstIdx] = id
+		resultList.List[worstIdx] = contact
 	}
 }
 
