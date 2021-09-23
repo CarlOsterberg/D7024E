@@ -10,7 +10,6 @@ import (
 //should be fixed by adding the empty field of the new field to the test json object
 type RPC struct {
 	RPC      string
-	MsgID    uuid.UUID
 	Address  string
 	TargetID string
 	Key      string
@@ -34,7 +33,7 @@ func MakePing(address string) []byte {
 	u, _ := uuid.NewV4()
 	ping := &RPC{
 		RPC:     "PING",
-		MsgID:   *u,
+		ConvID:  *u,
 		Address: address,
 	}
 	data, err := json.Marshal(ping)
@@ -48,7 +47,7 @@ func MakePing(address string) []byte {
 func MakePong(address string, msgID uuid.UUID) []byte {
 	pong := &RPC{
 		RPC:     "PONG",
-		MsgID:   msgID,
+		ConvID:  msgID,
 		Address: address,
 	}
 	data, err := json.Marshal(pong)

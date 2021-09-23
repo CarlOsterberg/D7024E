@@ -21,7 +21,7 @@ func Run(state Kademlia, cliCh chan string) {
 				switch recv.RPC {
 				case "PING":
 					fmt.Println(recv)
-					udp.Client(recv.Address, msg.MakePong(state.network.Self, recv.MsgID))
+					udp.Client(recv.Address, msg.MakePong(state.network.Self, recv.ConvID))
 				case "PONG":
 					fmt.Println(recv)
 				case "FIND_CONTACT":
@@ -61,7 +61,7 @@ func Run(state Kademlia, cliCh chan string) {
 					//k new find_nodes need to be sent
 					count := 0
 					for _, v := range lookup.klist.List {
-						if _, ok := lookup.sentmap[v.ID.String()]; !ok{
+						if _, ok := lookup.sentmap[v.ID.String()]; !ok {
 							//if nil
 							//Send find node
 							rpc := msg.MakeFindContact(state.network.Self, targetID.String())
@@ -69,7 +69,7 @@ func Run(state Kademlia, cliCh chan string) {
 							lookup.sentmap[v.ID.String()] = false //No response yet
 							count++
 						}
-						if count >= alpha{
+						if count >= alpha {
 							break
 						}
 					}
@@ -79,7 +79,7 @@ func Run(state Kademlia, cliCh chan string) {
 					done := false
 					count = 0
 					for _, v := range lookup.klist.List {
-						if ok, v := lookup.sentmap[v.ID.String()]; ok && v{
+						if ok, v := lookup.sentmap[v.ID.String()]; ok && v {
 							continue
 						} else {
 							count++
@@ -90,12 +90,11 @@ func Run(state Kademlia, cliCh chan string) {
 						done = true
 					}
 
-					if done{
+					if done {
 						//All contacts have responded, we are done
-						if lookup.rpctype == "STORE"{
+						if lookup.rpctype == "STORE" {
 							//Instruct the nodes to store
 						}
-
 
 						//TODO delete
 					}
@@ -113,7 +112,7 @@ func Run(state Kademlia, cliCh chan string) {
 				n := strings.Index(cliInst, "|")
 				switch cliInst[:n] {
 				case "ping":
-					reciever := NewContact(NewRandomKademliaID(), cliInst[n+1:])
+					reciever := NewContact(NewSha1KademliaID([]byte(cliInst[n+1:])), cliInst[n+1:])
 					state.network.SendPingMessage(&reciever)
 				case "find closest":
 					contacts := state.routingTable.FindClosestContacts(state.routingTable.me.ID, 1)
@@ -126,6 +125,10 @@ func Run(state Kademlia, cliCh chan string) {
 							fmt.Println(e.Value)
 						}
 					}
+				case "add contact":
+					id := NewSha1KademliaID([]byte(cliInst[n+1:]))
+					c := NewContact(id, cliInst[n+1:])
+					state.routingTable.AddContact(c)
 				default:
 					fmt.Println("Unknown command")
 				}
