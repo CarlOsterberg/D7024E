@@ -51,7 +51,33 @@ func Run(state Kademlia, cliCh chan string) {
 					}
 					//Merge new contacts into old list and update map
 					lookup.klist.Merge(contactList, *targetID)
+
+					key := sha1.New()
+					key.Write([]byte(recv.Address))
+					receivedID := string(key.Sum(nil))
+					lookup.sentmap[receivedID] = true
+
 					state.convIDMap[recv.ConvID] = lookup
+					//k new find_nodes need to be sent
+					count := 0
+					for _, v := range lookup.klist.List {
+						if !lookup.sentmap[v.ID.String()]{
+							//Send find node
+							rpc := msg.MakeFindContact(state.network.Self, targetID.String())
+							udp.Client(v.Address, rpc)
+							count++
+						}
+						if count >= alpha{
+							break
+						}
+					}
+					if count == 0{
+						//All contacts have responded, we are done
+						if lookup.rpctype == "STORE"{
+							//Instruct the nodes to store
+						}
+					}
+
 				}
 			} else {
 				fmt.Println("Channel closed")
