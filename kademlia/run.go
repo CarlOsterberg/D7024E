@@ -40,7 +40,7 @@ func Run(state Kademlia, cliCh chan string) {
 					addrList := recv.Contacts
 					contactList := NewResultList(k)
 					targetID := NewKademliaID(recv.TargetID)
-					for _, v := range addrList{
+					for _, v := range addrList {
 						//Hash the addresses and insert contacts into a list
 						key := sha1.New()
 						key.Write([]byte(v))
@@ -97,6 +97,12 @@ func Run(state Kademlia, cliCh chan string) {
 					contacts := state.routingTable.FindClosestContacts(state.routingTable.me.ID, 1)
 					for i := range contacts {
 						fmt.Println(contacts[i].String())
+					}
+				case "print buckets":
+					for _, bucket := range state.routingTable.buckets {
+						for e := bucket.list.Front(); e != nil; e = e.Next() {
+							fmt.Println(e.Value)
+						}
 					}
 				default:
 					fmt.Println("Unknown command")
