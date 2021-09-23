@@ -3,6 +3,7 @@ package msg
 import (
 	"encoding/json"
 	"fmt"
+	uuid "github.com/nu7hatch/gouuid"
 )
 
 //If a field is added make sure all the test works afterwards,
@@ -14,6 +15,7 @@ type RPC struct {
 	Key      string
 	Value    string
 	Contacts []string
+	ConvID   uuid.UUID
 }
 
 func TestRPC(x interface{}) bool {

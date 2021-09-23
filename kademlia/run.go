@@ -35,6 +35,9 @@ func Run(state Kademlia, cliCh chan string) {
 					response := msg.MakeFindContactResponse(state.network.Self, addressList)
 					udp.Client(recv.Address, response)
 				case "FIND_CONTACT_RESPONSE":
+					//lookup := state.convIDMap[recv.ConvID]
+					//addrList := recv.Contacts
+					//lookup.klist.Merge()
 
 				}
 			} else {
