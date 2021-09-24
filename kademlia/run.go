@@ -1,7 +1,6 @@
 package kademlia
 
 import (
-	"crypto/sha1"
 	"fmt"
 	uuid "github.com/nu7hatch/gouuid"
 	"program/kademlia/msg"
@@ -61,14 +60,18 @@ func Run(state Kademlia, cliCh chan string) {
 					//Merge new contacts into old list and update map
 					lookup.klist.Merge(contactList, *targetID)
 
-					key := sha1.New()
-					key.Write([]byte(recv.Address))
-					receivedID := string(key.Sum(nil))
-					lookup.sentmap[receivedID] = true
+					//	key := sha1.New()
+					//	key.Write([]byte(recv.Address))
+					//	receivedID := string(key.Sum(nil))
+					//	lookup.sentmap[receivedID] = true
+					receivedID := NewSha1KademliaID([]byte(recv.Address))
+					lookup.sentmap[receivedID.String()] = true
 
 					state.convIDMap[recv.ConvID] = lookup
 					//k new find_nodes need to be sent
 					count := 0
+					//	fmt.Println("the sent map")
+					//fmt.Println(lookup.sentmap)
 					for _, v := range lookup.klist.List {
 						if _, ok := lookup.sentmap[v.ID.String()]; !ok {
 							//if nil
@@ -86,6 +89,7 @@ func Run(state Kademlia, cliCh chan string) {
 					state.convIDMap[recv.ConvID] = lookup //Update map before checking if done
 
 					count = 0
+					fmt.Println(lookup.sentmap)
 					for _, v := range lookup.klist.List {
 
 						if ok, v := lookup.sentmap[v.ID.String()]; ok && v {
@@ -99,6 +103,7 @@ func Run(state Kademlia, cliCh chan string) {
 						fmt.Println("INNE I NODELOOKUPEND")
 						//All contacts have responded, we are done
 						if lookup.rpctype == "STORE" {
+							fmt.Println("INNE I NODELOOKUPEND Store")
 							//Instruct the nodes to store
 							for _, v := range lookup.klist.List {
 								state.network.SendStoreMessage(lookup.value, v.Address)
@@ -159,6 +164,8 @@ func Run(state Kademlia, cliCh chan string) {
 					storeTarget := NewSha1KademliaID([]byte(storeVal))
 					state.convIDMap[*convID] = *storeLookup
 					state.LookupContact(storeTarget, *convID)
+				case "map":
+					fmt.Println(state.valueMap)
 				default:
 					fmt.Println("Unknown command")
 				}
