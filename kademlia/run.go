@@ -10,8 +10,8 @@ import (
 )
 
 func Run(state Kademlia, cliCh chan string) {
-	if udp.GetOutboundIP().String() != "172.20.0.2" {
-		ip := "172.20.0.2:1234"
+	if udp.GetOutboundIP().String() != "172.18.0.2" {
+		ip := "172.18.0.2:1234"
 		public := NewContact(NewSha1KademliaID([]byte(ip)), ip)
 		state.routingTable.AddContact(public)
 		joinlookup := NewLookUp(k, "JOIN", []byte(""))
