@@ -3,6 +3,7 @@ package kademlia
 import (
 	"bytes"
 	"fmt"
+	uuid "github.com/nu7hatch/gouuid"
 	"log"
 	"program/kademlia/msg"
 	"program/udp"
@@ -47,10 +48,10 @@ func (network *Network) SendPingMessage(contact *Contact) {
 	udp.Client(contact.Address, message)
 }
 
-func (network *Network) SendFindContactMessage(contact *Contact) {
-	//targetID := contact.ID.String()
-	//msg := msg.MakeFindContact(contact.Address, targetID)
-	//udp.Client(contact.Address, msg)
+func (network *Network) SendFindContactMessage(contact *Contact, convID uuid.UUID) {
+	targetID := contact.ID.String()
+	msg := msg.MakeFindContact(contact.Address, targetID, convID)
+	udp.Client(contact.Address, msg)
 
 }
 

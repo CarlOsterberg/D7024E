@@ -44,6 +44,15 @@ func main() {
 			address, _ := reader.ReadString('\n')
 			address = strings.Replace(address, "\n", "", -1)
 			cliCh <- "add contact|" + address
+		case "put":
+			fmt.Print("Enter text to store: ")
+			data, _ := reader.ReadString('\n')
+			data = strings.Replace(data, "\n", "", -1)
+			if len(data) < 256{
+				cliCh <- "put|" + data
+			} else{
+				fmt.Println("Text was to long to be stored (255 characters max)")
+			}
 		default:
 			fmt.Printf("Not a command\n")
 		}

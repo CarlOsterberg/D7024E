@@ -3,6 +3,7 @@ package kademlia
 import (
 	"crypto/sha1"
 	"fmt"
+	uuid "github.com/nu7hatch/gouuid"
 	"program/kademlia/msg"
 	"program/udp"
 	"strings"
@@ -43,11 +44,7 @@ func Run(state Kademlia, cliCh chan string) {
 					contactList := NewResultList(k)
 					targetID := NewKademliaID(recv.TargetID)
 					for _, v := range addrList {
-						//Hash the addresses and insert contacts into a list
-						key := sha1.New()
-						key.Write([]byte(v))
-						id := string(key.Sum(nil))
-						kadID := NewKademliaID(id)
+						kadID := NewSha1KademliaID([]byte(v))
 						contact := NewContact(kadID, v)
 						contactList.Insert(contact, *targetID)
 					}
@@ -78,7 +75,6 @@ func Run(state Kademlia, cliCh chan string) {
 
 					state.convIDMap[recv.ConvID] = lookup //Update map before checking if done
 
-					done := false
 					count = 0
 					for _, v := range lookup.klist.List {
 
@@ -90,10 +86,6 @@ func Run(state Kademlia, cliCh chan string) {
 					}
 
 					if count == 0 {
-						done = true
-					}
-
-					if done {
 						//All contacts have responded, we are done
 						if lookup.rpctype == "STORE" {
 							//Instruct the nodes to store
@@ -146,6 +138,15 @@ func Run(state Kademlia, cliCh chan string) {
 					id := NewSha1KademliaID([]byte(cliInst[n+1:]))
 					c := NewContact(id, cliInst[n+1:])
 					state.routingTable.AddContact(c)
+				case "put":
+					storeVal := cliInst[n+1:]
+					fmt.Print("run.go received: ")
+					fmt.Println(storeVal)
+					storeLookup := NewLookUp(k, "STORE", []byte(storeVal))
+					convID, _ := uuid.NewV4()
+					storeTarget := NewSha1KademliaID([]byte(storeVal))
+					state.convIDMap[*convID] = *storeLookup
+					state.LookupContact(storeTarget, *convID)
 				default:
 					fmt.Println("Unknown command")
 				}
