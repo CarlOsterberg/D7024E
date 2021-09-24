@@ -8,7 +8,7 @@ type ResultList struct {
 
 func NewResultList(size int) *ResultList {
 	resultList := &ResultList{}
-	reslist := make([]Contact, size)
+	reslist := make([]Contact, 0, size)
 	resultList.List = reslist
 	resultList.Size = size
 	return resultList
