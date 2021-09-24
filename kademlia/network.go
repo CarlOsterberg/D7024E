@@ -44,7 +44,7 @@ func (network *Network) decode(data []byte) {
 }
 
 func (network *Network) SendPingMessage(contact *Contact) {
-	message := msg.MakePing(contact.Address)
+	message := msg.MakePing(network.Self)
 	udp.Client(contact.Address, message)
 }
 
