@@ -38,11 +38,11 @@ func NewKademlia(me Contact, ch chan msg.RPC) *Kademlia {
 }
 
 // LookupContact performs the node-lookup recursively
-func (kademlia *Kademlia) LookupContact(target *Contact) {
+func (kademlia *Kademlia) LookupContact(target *KademliaID, convID uuid.UUID) {
 	// TODO
-	closestContacts := kademlia.routingTable.FindClosestContacts(target.ID, alpha)
+	closestContacts := kademlia.routingTable.FindClosestContacts(target, alpha)
 	for i := 0; i < len(closestContacts); i++ {
-		kademlia.network.SendFindContactMessage(&closestContacts[i])
+		kademlia.network.SendFindContactMessage(&closestContacts[i], convID)
 	}
 }
 
