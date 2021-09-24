@@ -29,11 +29,14 @@ func Run(state Kademlia, cliCh chan string) {
 				state.routingTable.AddContact(NewContact(conid, recv.Address))
 				switch recv.RPC {
 				case "PING":
+					fmt.Println("inkommande ping")
 					fmt.Println(recv)
 					udp.Client(recv.Address, msg.MakePong(state.network.Self, recv.ConvID))
 				case "PONG":
+					fmt.Println("inkommande pong")
 					fmt.Println(recv)
 				case "FIND_CONTACT":
+					fmt.Println("INNE I FIND CONNACT")
 					//Find the k closest nodes and send them back
 					kadID := NewKademliaID(recv.TargetID)
 					target := NewContact(kadID, "")
@@ -45,6 +48,7 @@ func Run(state Kademlia, cliCh chan string) {
 					response := msg.MakeFindContactResponse(state.network.Self, addressList, recv.TargetID, recv.ConvID)
 					udp.Client(recv.Address, response)
 				case "FIND_CONTACT_RESPONSE":
+					fmt.Println("INNE I FIND CONNACT RESPONSE")
 					lookup := state.convIDMap[recv.ConvID]
 					addrList := recv.Contacts
 					contactList := NewResultList(k)
@@ -92,6 +96,7 @@ func Run(state Kademlia, cliCh chan string) {
 					}
 
 					if count == 0 {
+						fmt.Println("INNE I NODELOOKUPEND")
 						//All contacts have responded, we are done
 						if lookup.rpctype == "STORE" {
 							//Instruct the nodes to store
@@ -100,6 +105,7 @@ func Run(state Kademlia, cliCh chan string) {
 							}
 						}
 						if lookup.rpctype == "JOIN" {
+							fmt.Println("INNE I NODELOOKUPEND JOIN")
 							for _, v := range lookup.klist.List {
 								joinid := NewSha1KademliaID([]byte(v.Address))
 								state.routingTable.AddContact(NewContact(joinid, v.Address))
