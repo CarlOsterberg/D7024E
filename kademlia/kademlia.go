@@ -42,7 +42,7 @@ func (kademlia *Kademlia) LookupContact(target *KademliaID, convID uuid.UUID) {
 	// TODO
 	closestContacts := kademlia.routingTable.FindClosestContacts(target, alpha)
 	for i := 0; i < len(closestContacts); i++ {
-		kademlia.network.SendFindContactMessage(&closestContacts[i], convID)
+		kademlia.network.SendFindContactMessage(&closestContacts[i], convID, *target)
 	}
 }
 
