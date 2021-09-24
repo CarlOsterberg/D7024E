@@ -26,6 +26,7 @@ func (network *Network) Listen(ip string, port int) {
 		_, _, err := server.ReadFromUDP(buffer)
 		n := bytes.IndexByte(buffer[:], 0)
 		data := buffer[:n]
+		fmt.Println(data)
 		if err != nil {
 			fmt.Printf("Some error  %v", err)
 			continue

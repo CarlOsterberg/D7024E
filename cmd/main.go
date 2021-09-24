@@ -48,11 +48,13 @@ func main() {
 			fmt.Print("Enter text to store: ")
 			data, _ := reader.ReadString('\n')
 			data = strings.Replace(data, "\n", "", -1)
-			if len(data) < 256{
+			if len(data) < 256 {
 				cliCh <- "put|" + data
-			} else{
+			} else {
 				fmt.Println("Text was to long to be stored (255 characters max)")
 			}
+		case "map":
+			cliCh <- "map|"
 		default:
 			fmt.Printf("Not a command\n")
 		}
