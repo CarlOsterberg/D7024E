@@ -8,6 +8,8 @@ type ResultList struct {
 
 func NewResultList(size int) *ResultList {
 	resultList := &ResultList{}
+	reslist := make([]Contact, 0, size)
+	resultList.List = reslist
 	resultList.Size = size
 	return resultList
 }
@@ -19,7 +21,7 @@ func (resultList *ResultList) Insert(contact Contact, target KademliaID) {
 	//var worstDistance *KademliaID
 	worstDistance := NewKademliaID("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
 	idDistance := contact.ID.CalcDistance(&target)
-
+	worstDistance = NewKademliaID("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
 	if len(resultList.List) < resultList.Size {
 		resultList.List = append(resultList.List, contact)
 		return

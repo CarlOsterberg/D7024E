@@ -15,7 +15,6 @@ type Network struct {
 }
 
 func (network *Network) Listen(ip string, port int) {
-	buffer := make([]byte, 2048)
 	server, err := udp.Server(ip, port)
 	if err != nil {
 		log.Fatal(err)
@@ -23,9 +22,11 @@ func (network *Network) Listen(ip string, port int) {
 	}
 	fmt.Println("Server running")
 	for {
+		buffer := make([]byte, 2048)
 		_, _, err := server.ReadFromUDP(buffer)
 		n := bytes.IndexByte(buffer[:], 0)
 		data := buffer[:n]
+		fmt.Println(data)
 		if err != nil {
 			fmt.Printf("Some error  %v", err)
 			continue

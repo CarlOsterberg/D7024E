@@ -64,7 +64,7 @@ func MakeFindContact(address string, target string, msgID uuid.UUID) []byte {
 		RPC:      "FIND_CONTACT",
 		Address:  address,
 		TargetID: target,
-		ConvID: msgID,
+		ConvID:   msgID,
 	}
 	data, err := json.Marshal(findContact)
 	if err != nil {
@@ -80,7 +80,7 @@ func MakeFindContactResponse(address string, list []string, target string, msgID
 		Address:  address,
 		Contacts: list,
 		TargetID: target,
-		ConvID: msgID,
+		ConvID:   msgID,
 	}
 	data, err := json.Marshal(findContactResponse)
 	if err != nil {
@@ -105,6 +105,7 @@ func MakeStore(storeData []byte) []byte {
 func DecodeRPC(data []byte) *RPC {
 	obj := &RPC{}
 	if err := json.Unmarshal(data, &obj); err != nil {
+		fmt.Println(err)
 		return nil
 	}
 	return obj
