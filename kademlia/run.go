@@ -14,6 +14,12 @@ func Run(state Kademlia, cliCh chan string) {
 		ip := "172.20.0.2:1234"
 		public := NewContact(NewSha1KademliaID([]byte(ip)), ip)
 		state.routingTable.AddContact(public)
+		joinlookup := NewLookUp(k, "JOIN", []byte(""))
+		myid := NewSha1KademliaID([]byte(state.network.Self))
+		convID, _ := uuid.NewV4()
+		state.convIDMap[*convID] = *joinlookup
+		state.network.SendFindContactMessage(&public, *convID, *myid)
+
 	}
 	for {
 		select {
