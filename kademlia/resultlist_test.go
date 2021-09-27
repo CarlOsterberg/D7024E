@@ -2,6 +2,7 @@ package kademlia
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -54,6 +55,31 @@ func TestInsert1(t *testing.T) {
 	rl.Insert(NewContact(id19, "localhost"), *target)
 	rl.Insert(NewContact(id20, "localhost"), *target)
 	rl.Insert(NewContact(id21, "localhost"), *target)
+
+	assert.Equal(t, len(rl.List), 5)
+
+	for _, v := range rl.List {
+		fmt.Println(v.ID)
+	}
+
+}
+
+func TestInsert2(t *testing.T) {
+
+	rl := NewResultList(5)
+
+	target := NewKademliaID("FFFFFFFF00000000000000000000000000000001")
+
+	id1 := NewKademliaID("FFFFFFFF00000000000000000000000000000001")
+	id2 := NewKademliaID("FFFFFFFF00000000000000000000000000000002")
+
+	rl.Insert(NewContact(id1, "localhost"), *target)
+	rl.Insert(NewContact(id2, "localhost"), *target)
+	rl.Insert(NewContact(id1, "localhost"), *target)
+
+	assert.Equal(t, 2, len(rl.List))
+
+
 	for _, v := range rl.List {
 		fmt.Println(v.ID)
 	}
@@ -82,8 +108,13 @@ func TestMerge(t *testing.T) {
 
 	rl1.Merge(rl2, *target)
 
+	assert.Equal(t, len(rl1.List), 3)
+
 	for _, v := range rl1.List {
 		fmt.Println(v.ID)
 	}
+
+
+
 
 }
