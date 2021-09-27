@@ -61,6 +61,6 @@ func (network *Network) SendFindDataMessage(hash string) {
 }
 
 func (network *Network) SendStoreMessage(data []byte, addres string) {
-	storeMessage := msg.MakeStore(data)
+	storeMessage := msg.MakeStore(network.Self, data)
 	udp.Client(addres, storeMessage)
 }

@@ -1,5 +1,7 @@
 package kademlia
 
+import "fmt"
+
 //ResultList keeps a list of KademliaID with a max size
 type ResultList struct {
 	List []Contact
@@ -21,9 +23,12 @@ func (resultList *ResultList) Insert(contact Contact, target KademliaID) {
 	//var worstDistance *KademliaID
 	worstDistance := NewKademliaID("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
 	idDistance := contact.ID.CalcDistance(&target)
-	
-	for _, v := range resultList.List{
-		if v.ID.Equals(contact.ID){
+	worstDistance = NewKademliaID("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+	fmt.Println("klist längd: ", len(resultList.List))
+	fmt.Println(resultList.List)
+
+	for _, v := range resultList.List {
+		if v.ID.Equals(contact.ID) {
 			return
 		}
 	}
