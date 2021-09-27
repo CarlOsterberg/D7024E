@@ -21,8 +21,7 @@ func (resultList *ResultList) Insert(contact Contact, target KademliaID) {
 	//var worstDistance *KademliaID
 	worstDistance := NewKademliaID("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
 	idDistance := contact.ID.CalcDistance(&target)
-	worstDistance = NewKademliaID("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
-
+	
 	for _, v := range resultList.List{
 		if v.ID.Equals(contact.ID){
 			return
