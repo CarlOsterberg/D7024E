@@ -90,11 +90,17 @@ func Run(state Kademlia, cliCh chan string) {
 
 					count = 0
 					fmt.Println(lookup.sentmap)
-					for _, v := range lookup.klist.List {
+					/*for _, v := range lookup.klist.List {
 
 						if ok, v := lookup.sentmap[v.ID.String()]; ok && v {
 							continue
 						} else {
+							count++
+						}
+					}*/
+
+					for _, val := range lookup.sentmap{
+						if !val{
 							count++
 						}
 					}

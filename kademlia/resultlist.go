@@ -18,13 +18,21 @@ func NewResultList(size int) *ResultList {
 func (resultList *ResultList) Insert(contact Contact, target KademliaID) {
 	shouldInsert := false
 	var worstIdx int
-	var worstDistance *KademliaID
+	//var worstDistance *KademliaID
+	worstDistance := NewKademliaID("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
 	idDistance := contact.ID.CalcDistance(&target)
-	worstDistance = NewKademliaID("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+	
+	for _, v := range resultList.List{
+		if v.ID.Equals(contact.ID){
+			return
+		}
+	}
+
 	if len(resultList.List) < resultList.Size {
 		resultList.List = append(resultList.List, contact)
 		return
 	}
+
 	for i, v := range resultList.List {
 		dist := v.ID.CalcDistance(&target)
 		//One of the elements are worse than id
