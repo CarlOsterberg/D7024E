@@ -49,7 +49,7 @@ func Run(state Kademlia, cliCh chan string) {
 				case "FIND_CONTACT_RESPONSE":
 					fmt.Println("INNE I FIND CONNACT RESPONSE")
 					lookup, ok := state.convIDMap[recv.ConvID]
-					if !ok {
+					if !ok{
 						panic("ERROR!!!!!!!!!!!! LOOKUP has been DELETED, This line should not be reached")
 					}
 					addrList := recv.Contacts
@@ -102,8 +102,8 @@ func Run(state Kademlia, cliCh chan string) {
 						}
 					}*/
 
-					for _, val := range lookup.sentmap {
-						if !val {
+					for _, responded := range lookup.sentmap{
+						if !responded{
 							count++
 						}
 					}
@@ -122,6 +122,9 @@ func Run(state Kademlia, cliCh chan string) {
 							fmt.Println("INNE I NODELOOKUPEND JOIN")
 							fmt.Println(lookup.klist.List)
 							for _, v := range lookup.klist.List {
+								if v.ID == state.routingTable.me.ID{
+									continue
+								}
 								joinid := NewSha1KademliaID([]byte(v.Address))
 								state.routingTable.AddContact(NewContact(joinid, v.Address))
 							}
