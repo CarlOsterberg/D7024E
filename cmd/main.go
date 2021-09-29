@@ -8,27 +8,32 @@ import (
 	"program/kademlia/msg"
 	"program/udp"
 	"strings"
-	"time"
 )
 
 func main() {
+	//startup procedure
 	port := "1234"
 	address := udp.GetOutboundIP().String() + ":" + port
+	//create contact for self
 	me := k.NewContact(k.NewSha1KademliaID([]byte(address)), address)
+	//channel for server -> node_state communication
 	serverCh := make(chan msg.RPC, 50)
+	//channel for cli -> node_state communication
 	cliCh := make(chan string, 50)
+	//create the kademlia network node state
 	node := k.NewKademlia(me, serverCh)
+	//start the node state thread
 	go k.Run(*node, cliCh)
+	//start the cli reader
 	reader := bufio.NewReader(os.Stdin)
 	run := true
-	time.Sleep(time.Duration(1000) * time.Millisecond)
+	//cli loop
 	for run {
-		fmt.Print("-> ")
 		text, _ := reader.ReadString('\n')
 		switch strings.Replace(text, "\n", "", -1) {
 		case "self":
 			fmt.Printf("%v\n", udp.GetOutboundIP())
-		case "q":
+		case "terminate":
 			run = false
 		case "ping":
 			fmt.Print("Address: ")
