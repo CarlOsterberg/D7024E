@@ -122,9 +122,6 @@ func Run(state Kademlia, cliCh chan string) {
 							fmt.Println("INNE I NODELOOKUPEND JOIN")
 							fmt.Println(lookup.klist.List)
 							for _, v := range lookup.klist.List {
-								if v.ID == state.routingTable.me.ID{
-									continue
-								}
 								joinid := NewSha1KademliaID([]byte(v.Address))
 								state.routingTable.AddContact(NewContact(joinid, v.Address))
 							}
