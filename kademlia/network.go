@@ -26,7 +26,7 @@ func (network *Network) Listen(ip string, port int) {
 		_, _, err := server.ReadFromUDP(buffer)
 		n := bytes.IndexByte(buffer[:], 0)
 		data := buffer[:n]
-		fmt.Println(data)
+		//	fmt.Println(data)
 		if err != nil {
 			fmt.Printf("Some error  %v", err)
 			continue
@@ -61,6 +61,6 @@ func (network *Network) SendFindDataMessage(hash string) {
 }
 
 func (network *Network) SendStoreMessage(data []byte, addres string) {
-	storeMessage := msg.MakeStore(data)
+	storeMessage := msg.MakeStore(network.Self, data)
 	udp.Client(addres, storeMessage)
 }
