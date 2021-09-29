@@ -48,7 +48,10 @@ func Run(state Kademlia, cliCh chan string) {
 					udp.Client(recv.Address, response)
 				case "FIND_CONTACT_RESPONSE":
 					fmt.Println("INNE I FIND CONNACT RESPONSE")
-					lookup := state.convIDMap[recv.ConvID]
+					lookup, ok := state.convIDMap[recv.ConvID]
+					if !ok{
+						panic("ERROR!!!!!!!!!!!! LOOKUP has been DELETED, This line should not be reached")
+					}
 					addrList := recv.Contacts
 					contactList := NewResultList(k)
 					targetID := NewKademliaID(recv.TargetID)
@@ -99,8 +102,8 @@ func Run(state Kademlia, cliCh chan string) {
 						}
 					}*/
 
-					for _, val := range lookup.sentmap{
-						if !val{
+					for _, responded := range lookup.sentmap{
+						if !responded{
 							count++
 						}
 					}
@@ -118,6 +121,9 @@ func Run(state Kademlia, cliCh chan string) {
 						if lookup.rpctype == "JOIN" {
 							fmt.Println("INNE I NODELOOKUPEND JOIN")
 							for _, v := range lookup.klist.List {
+								if v.ID == state.routingTable.me.ID{
+									continue
+								}
 								joinid := NewSha1KademliaID([]byte(v.Address))
 								state.routingTable.AddContact(NewContact(joinid, v.Address))
 							}
