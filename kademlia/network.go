@@ -40,7 +40,7 @@ func (network *Network) decode(data []byte) {
 	if decodedMsg != nil {
 		network.RecvRPC <- *decodedMsg
 	} else {
-		fmt.Println("Msg not valid")
+		fmt.Println("Received message not a valid RPC")
 	}
 }
 
