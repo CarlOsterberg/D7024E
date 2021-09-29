@@ -89,9 +89,10 @@ func MakeFindContactResponse(address string, list []string, target string, msgID
 	}
 	return data
 }
-func MakeStore(storeData []byte) []byte {
+func MakeStore(address string, storeData []byte) []byte {
 	store := &RPC{
 		RPC:        "STORE",
+		Address:    address,
 		StoreValue: storeData,
 	}
 	data, err := json.Marshal(store)

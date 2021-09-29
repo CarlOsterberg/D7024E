@@ -1,7 +1,6 @@
 package kademlia
 
 import (
-	"crypto/sha1"
 	uuid "github.com/nu7hatch/gouuid"
 	"program/kademlia/msg"
 	"strconv"
@@ -61,8 +60,7 @@ func (kademlia *Kademlia) LookupData(hash string) []byte {
 func (kademlia *Kademlia) Store(data []byte) {
 	// https://gobyexample.com/sha1-hashes
 	// https://gobyexample.com/maps
-	key := sha1.New()
-	key.Write(data)
-	var id = string(key.Sum(nil))
-	kademlia.valueMap[id] = data
+	id := NewSha1KademliaID(data)
+
+	kademlia.valueMap[id.String()] = data
 }
