@@ -200,7 +200,7 @@ func Run(state Kademlia, cliCh chan string) {
 					convID, _ := uuid.NewV4()
 					target := NewKademliaID(key)
 					state.convIDMap[*convID] = *getLookup
-					state.LookupContact(target, *convID)
+					state.LookupData(target, *convID)
 				case "map":
 					fmt.Println(state.valueMap)
 				default:

@@ -74,6 +74,21 @@ func MakeFindContact(address string, target string, msgID uuid.UUID) []byte {
 	return data
 }
 
+func MakeFindValue(address string, target string, msgID uuid.UUID) []byte {
+	findContact := &RPC{
+		RPC:      "FIND_VALUE",
+		Address:  address,
+		TargetID: target,
+		ConvID:   msgID,
+	}
+	data, err := json.Marshal(findContact)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	return data
+}
+
 func MakeFindContactResponse(address string, list []string, target string, msgID uuid.UUID, value string) []byte {
 	findContactResponse := &RPC{
 		RPC:      "FIND_CONTACT_RESPONSE",
