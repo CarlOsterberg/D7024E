@@ -50,7 +50,7 @@ func Run(state Kademlia, cliCh chan string) {
 						recv.TargetID, recv.ConvID, "")
 					udp.Client(recv.Address, response)
 				case "FIND_VALUE":
-					key := recv.Key
+					key := recv.TargetID
 					val, ok := state.valueMap[key]
 					if ok{
 						//If value is found send back the value and an empty contact list
