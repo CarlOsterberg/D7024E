@@ -58,6 +58,15 @@ func main() {
 			} else {
 				fmt.Println("Text was to long to be stored (255 characters max)")
 			}
+		case "get":
+			fmt.Print("Enter key: ")
+			data, _ := reader.ReadString('\n')
+			data = strings.Replace(data, "\n", "", -1)
+			if len(data) != 20 {
+				fmt.Println("Not a valid key")
+			}else{
+				cliCh <- "get|" + data
+			}
 		case "map":
 			cliCh <- "map|"
 		default:

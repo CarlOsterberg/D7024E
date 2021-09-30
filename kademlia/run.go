@@ -53,12 +53,14 @@ func Run(state Kademlia, cliCh chan string) {
 					key := recv.Key
 					val, ok := state.valueMap[key]
 					if ok{
+						//If value is found send back the value and an empty contact list
 						addressList := []string{}
 						response := msg.MakeFindContactResponse(state.network.Self, addressList,
 							recv.TargetID, recv.ConvID, string(val))
 
 						udp.Client(recv.Address, response)
 					}else{
+						//Otherwise, standard find_contact procedure
 						kadID := NewKademliaID(recv.TargetID)
 						target := NewContact(kadID, "")
 						contacts := state.KClosestNodes(&target)
@@ -78,6 +80,7 @@ func Run(state Kademlia, cliCh chan string) {
 					addrList := recv.Contacts
 					contactList := NewResultList(k)
 					targetID := NewKademliaID(recv.TargetID)
+					//Create a resultlist for the new contacts
 					for _, v := range addrList {
 						kadID := NewSha1KademliaID([]byte(v))
 						contact := NewContact(kadID, v)
@@ -131,6 +134,13 @@ func Run(state Kademlia, cliCh chan string) {
 								state.routingTable.AddContact(NewContact(joinid, v.Address))
 							}
 						}
+						if lookup.rpctype == "GET" {
+							if lookup.value == nil{
+								fmt.Println("The value for the given key was not found.")
+							}else{
+								fmt.Println("The value for the given key is: ", lookup.value)
+							}
+						}
 
 						//Delete the lookup when we are done with the conversation
 						delete(state.convIDMap, recv.ConvID)
@@ -177,6 +187,13 @@ func Run(state Kademlia, cliCh chan string) {
 					storeTarget := NewSha1KademliaID([]byte(storeVal))
 					state.convIDMap[*convID] = *storeLookup
 					state.LookupContact(storeTarget, *convID)
+				case "get":
+					key := cliInst[n+1:]
+					getLookup := NewLookUp(k, "GET", []byte(""))
+					convID, _ := uuid.NewV4()
+					target := NewKademliaID(key)
+					state.convIDMap[*convID] = *getLookup
+					state.LookupContact(target, *convID)
 				case "map":
 					fmt.Println(state.valueMap)
 				default:
