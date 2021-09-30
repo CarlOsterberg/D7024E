@@ -62,7 +62,7 @@ func main() {
 			fmt.Print("Enter key: ")
 			data, _ := reader.ReadString('\n')
 			data = strings.Replace(data, "\n", "", -1)
-			if len(data) != 20 {
+			if len(data) != 40 {
 				fmt.Println("Not a valid key")
 			}else{
 				cliCh <- "get|" + data
