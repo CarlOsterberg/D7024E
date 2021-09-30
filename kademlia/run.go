@@ -142,7 +142,7 @@ func Run(state Kademlia, cliCh chan string) {
 							}
 						}
 						if lookup.rpctype == "GET" {
-							if lookup.value == nil{
+							if !lookup.foundValue{
 								fmt.Println("The value for the given key was not found.")
 							}else{
 								fmt.Println("The value for the given key is: ", lookup.value)
