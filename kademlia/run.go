@@ -44,8 +44,30 @@ func Run(state Kademlia, cliCh chan string) {
 					for _, v := range contacts {
 						addressList = append(addressList, v.Address)
 					}
-					response := msg.MakeFindContactResponse(state.network.Self, addressList, recv.TargetID, recv.ConvID)
+					response := msg.MakeFindContactResponse(state.network.Self, addressList,
+						recv.TargetID, recv.ConvID, "")
 					udp.Client(recv.Address, response)
+				case "FIND_VALUE":
+					key := recv.Key
+					val, ok := state.valueMap[key]
+					if ok{
+						addressList := []string{}
+						response := msg.MakeFindContactResponse(state.network.Self, addressList,
+							recv.TargetID, recv.ConvID, string(val))
+
+						udp.Client(recv.Address, response)
+					}else{
+						kadID := NewKademliaID(recv.TargetID)
+						target := NewContact(kadID, "")
+						contacts := state.KClosestNodes(&target)
+						var addressList []string
+						for _, v := range contacts {
+							addressList = append(addressList, v.Address)
+						}
+						response := msg.MakeFindContactResponse(state.network.Self, addressList,
+							recv.TargetID, recv.ConvID, "")
+						udp.Client(recv.Address, response)
+					}
 				case "FIND_CONTACT_RESPONSE":
 					fmt.Println("INNE I FIND CONNACT RESPONSE")
 					lookup, ok := state.convIDMap[recv.ConvID]
@@ -76,6 +98,9 @@ func Run(state Kademlia, cliCh chan string) {
 					//	fmt.Println("the sent map")
 					//fmt.Println(lookup.sentmap)
 					for _, v := range lookup.klist.List {
+						if lookup.foundValue{ //Value is found, don't send any more requests
+							break
+						}
 						if _, ok := lookup.sentmap[v.ID.String()]; !ok {
 							//if nil
 							//Send find node

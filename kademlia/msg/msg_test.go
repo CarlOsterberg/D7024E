@@ -48,13 +48,14 @@ func TestMakeFindContactResponse(t *testing.T) {
 	var idList []string
 	idList = append(idList, "hello")
 	idList = append(idList, "ok")
-	formatted := MakeFindContactResponse("12.34.56.78:1234", idList, "00000000000000000000", *u)
+	formatted := MakeFindContactResponse("12.34.56.78:1234", idList, "00000000000000000000", *u, "hello")
 	correct := &RPC{
 		RPC: "FIND_CONTACT_RESPONSE",
 		ConvID: *u,
 		Address: "12.34.56.78:1234",
 		Contacts: idList,
 		TargetID: "00000000000000000000",
+		Value: "hello",
 	}
 	decodedFormatted := DecodeRPC(formatted)
 	assert.Equal(t, decodedFormatted, correct, "MakeFindContactError")
