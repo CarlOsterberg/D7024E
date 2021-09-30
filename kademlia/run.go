@@ -77,6 +77,13 @@ func Run(state Kademlia, cliCh chan string) {
 					if !ok {
 						panic("ERROR!!!!!!!!!!!! LOOKUP has been DELETED, This line should not be reached")
 					}
+
+					//If find_value has found a value we mark the lookup as done and save the value
+					if recv.Value != "" && lookup.rpctype == "GET"{
+						lookup.foundValue = true
+						lookup.value = []byte(recv.Value)
+					}
+
 					addrList := recv.Contacts
 					contactList := NewResultList(k)
 					targetID := NewKademliaID(recv.TargetID)
@@ -189,7 +196,7 @@ func Run(state Kademlia, cliCh chan string) {
 					state.LookupContact(storeTarget, *convID)
 				case "get":
 					key := cliInst[n+1:]
-					getLookup := NewLookUp(k, "GET", []byte(""))
+					getLookup := NewLookUp(k, "GET", nil)
 					convID, _ := uuid.NewV4()
 					target := NewKademliaID(key)
 					state.convIDMap[*convID] = *getLookup
