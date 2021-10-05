@@ -145,7 +145,7 @@ func Run(state Kademlia, cliCh chan string) {
 							if !lookup.foundValue{
 								fmt.Println("The value for the given key was not found.")
 							}else{
-								fmt.Println("The value for the given key is: ", lookup.value)
+								fmt.Println("The value for the given key is: ", string(lookup.value))
 							}
 						}
 
