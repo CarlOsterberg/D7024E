@@ -6,6 +6,7 @@ type LookUp struct {
 	sentmap map[string]bool
 	rpctype string
 	value   []byte
+	foundValue bool
 }
 
 //constructor
@@ -17,5 +18,6 @@ func NewLookUp(size int, rpctype string, data []byte) *LookUp {
 	lookup.sentmap = sentmap
 	lookup.rpctype = rpctype
 	lookup.value = data
+	lookup.foundValue = false
 	return lookup
 }
