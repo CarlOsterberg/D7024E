@@ -1,7 +1,6 @@
 package main
 
 import (
-	"program/cmd/cli"
 	k "program/kademlia"
 	"program/kademlia/msg"
 	"program/udp"
