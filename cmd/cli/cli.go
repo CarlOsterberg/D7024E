@@ -46,6 +46,15 @@ func CLI(cliCh chan string) {
 			cliCh <- "map|"
 		case "debug":
 			cliCh <- "debug|"
+		case "get":
+			fmt.Print("Enter key: ")
+			data, _ := reader.ReadString('\n')
+			data = strings.Replace(data, "\n", "", -1)
+			if len(data) != 40 {
+				fmt.Println("Not a valid key")
+			}else{
+				cliCh <- "get|" + data
+			}
 		default:
 			fmt.Printf("Not a command\n")
 		}

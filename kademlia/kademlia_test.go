@@ -2,7 +2,6 @@ package kademlia
 
 import (
 	"crypto/sha1"
-	"fmt"
 	"program/kademlia/msg"
 	"testing"
 )
@@ -21,13 +20,13 @@ func TestKademlia_Store(t *testing.T) {
 	key3 :=  sha1.New()
 	key3.Write([]byte("hej på dig"))
 	testkad.Store([]byte("hej på dig"))
-	var id = string(key.Sum(nil))
+	/*var id = string(key.Sum(nil))
 	var id2 = string(key2.Sum(nil))
 	var id3 = string(key3.Sum(nil))
 	testkad.LookupData(id2)
 	fmt.Println("map:", string(testkad.LookupData(id2)))
 	fmt.Println("map:", string(testkad.LookupData(id)))
 	fmt.Println("map:", string(testkad.LookupData(id2)))
-	fmt.Println("map:", string(testkad.LookupData(id3)))
+	fmt.Println("map:", string(testkad.LookupData(id3)))*/
 
 }

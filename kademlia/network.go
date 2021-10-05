@@ -56,8 +56,11 @@ func (network *Network) SendFindContactMessage(contact *Contact, convID uuid.UUI
 
 }
 
-func (network *Network) SendFindDataMessage(hash string) {
+func (network *Network) SendFindDataMessage(contact *Contact, convID uuid.UUID, target KademliaID) {
 	// TODO
+	targetID := target.String()
+	msg := msg.MakeFindValue(network.Self, targetID, convID)
+	udp.Client(contact.Address, msg)
 }
 
 func (network *Network) SendStoreMessage(data []byte, addres string) {

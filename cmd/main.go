@@ -21,6 +21,5 @@ func main() {
 	node := k.NewKademlia(me, serverCh)
 	//start the node state thread
 	go k.Run(*node, cliCh)
-	//start the cli
 	cli.CLI(cliCh)
 }
