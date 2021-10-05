@@ -1,6 +1,7 @@
 package main
 
 import (
+	"program/cmd/cli"
 	k "program/kademlia"
 	"program/kademlia/msg"
 	"program/udp"
@@ -20,4 +21,5 @@ func main() {
 	node := k.NewKademlia(me, serverCh)
 	//start the node state thread
 	go k.Run(*node, cliCh)
+	cli.CLI(cliCh)
 }
