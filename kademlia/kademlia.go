@@ -17,7 +17,7 @@ type Kademlia struct {
 	convIDMap    map[uuid.UUID]LookUp
 }
 
-func NewKademlia(me Contact, ch chan msg.RPC) *Kademlia {
+func NewKademlia(me Contact, ch chan msg.RPC, test bool) *Kademlia {
 	kademlia := &Kademlia{}
 	rt := NewRoutingTable(me)
 	kademlia.routingTable = *rt
@@ -28,7 +28,9 @@ func NewKademlia(me Contact, ch chan msg.RPC) *Kademlia {
 	kademlia.network = *network
 	n := strings.Index(me.Address, ":")
 	port, _ := strconv.Atoi(me.Address[n+1:])
-	go kademlia.network.Listen("0.0.0.0", port)
+	if !test {
+		go kademlia.network.Listen("0.0.0.0", port)
+	}
 	valueMap := make(map[string][]byte)
 	kademlia.valueMap = valueMap
 	sentid := make(map[uuid.UUID]LookUp)

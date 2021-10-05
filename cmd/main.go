@@ -18,7 +18,7 @@ func main() {
 	//channel for cli -> node_state communication
 	cliCh := make(chan string, 50)
 	//create the kademlia network node state
-	node := k.NewKademlia(me, serverCh)
+	node := k.NewKademlia(me, serverCh, false)
 	//start the node state thread
 	go k.Run(*node, cliCh)
 	cli.CLI(cliCh)
