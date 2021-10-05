@@ -23,6 +23,7 @@ func Run(state Kademlia, cliCh chan string) {
 		state.convIDMap[*convID] = *joinlookup
 		state.network.SendFindContactMessage(&public, *convID, *myid)
 	}
+	debug := false
 	for {
 		select {
 		case recv, serverChStatus := <-state.network.RecvRPC:
@@ -31,12 +32,15 @@ func Run(state Kademlia, cliCh chan string) {
 				have the sender added to routing table*/
 				conid := NewSha1KademliaID([]byte(recv.Address))
 				state.routingTable.AddContact(NewContact(conid, recv.Address))
+				if debug {
+					fmt.Println(recv)
+				}
 				switch recv.RPC {
 				case "PING":
-					reciever := NewContact(NewSha1KademliaID([]byte(recv.Address)), recv.Address)
-					state.network.SendPingMessage(&reciever)
+					data := msg.MakePong(state.network.Self, recv.ConvID)
+					udp.Client(recv.Address, data)
 				case "PONG":
-					fmt.Println(recv)
+					//Idk
 				case "FIND_CONTACT":
 					//Find the k closest nodes and send them back
 					kadID := NewKademliaID(recv.TargetID)
@@ -155,7 +159,6 @@ func Run(state Kademlia, cliCh chan string) {
 					}
 
 				case "STORE":
-					//fmt.Println(recv)
 					state.Store(recv.StoreValue)
 				}
 			} else {
@@ -203,6 +206,8 @@ func Run(state Kademlia, cliCh chan string) {
 					state.LookupData(target, *convID)
 				case "map":
 					fmt.Println(state.valueMap)
+				case "debug":
+					debug = !debug
 				default:
 					fmt.Println("Unknown command")
 				}
