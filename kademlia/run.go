@@ -6,13 +6,19 @@ import (
 	"program/kademlia/msg"
 	"program/udp"
 	"strings"
+	"sync"
 )
 
-func Run(state Kademlia, cliCh chan string) {
+var state Kademlia
+
+func Run(st Kademlia, cliCh chan string) {
+	state = st
 	/*Docker should always create the node 10.20.0.2
-	use that as bootsrapping node to start the network*/
+	use that as bootstrapping node to start the network*/
+	var stateMutex = &sync.Mutex{}
 	if udp.GetOutboundIP().String() != "10.20.0.2" {
 		ip := "10.20.0.2:1234"
+		stateMutex.Lock()
 		public := NewContact(NewSha1KademliaID([]byte(ip)), ip)
 		//Add public node to routing table
 		state.routingTable.AddContact(public)
@@ -22,6 +28,7 @@ func Run(state Kademlia, cliCh chan string) {
 		convID, _ := uuid.NewV4()
 		state.convIDMap[*convID] = *joinlookup
 		state.network.SendFindContactMessage(&public, *convID, *myid)
+		stateMutex.Unlock()
 	}
 	debug := false
 	for {
@@ -31,7 +38,9 @@ func Run(state Kademlia, cliCh chan string) {
 				/*Incoming correct messages to the server should
 				have the sender added to routing table*/
 				conid := NewSha1KademliaID([]byte(recv.Address))
+				stateMutex.Lock()
 				state.routingTable.AddContact(NewContact(conid, recv.Address))
+				stateMutex.Unlock()
 				if debug {
 					fmt.Println(recv)
 				}
@@ -45,6 +54,7 @@ func Run(state Kademlia, cliCh chan string) {
 					//Find the k closest nodes and send them back
 					kadID := NewKademliaID(recv.TargetID)
 					target := NewContact(kadID, "")
+					stateMutex.Lock()
 					contacts := state.KClosestNodes(&target)
 					var addressList []string
 					for _, v := range contacts {
@@ -52,10 +62,12 @@ func Run(state Kademlia, cliCh chan string) {
 					}
 					response := msg.MakeFindContactResponse(state.network.Self, addressList, recv.TargetID, recv.ConvID)
 					udp.Client(recv.Address, response)
+					stateMutex.Unlock()
 				case "FIND_CONTACT_RESPONSE":
+					stateMutex.Lock()
 					lookup, ok := state.convIDMap[recv.ConvID]
 					if !ok {
-						panic("ERROR!!!!!!!!!!!! LOOKUP has been DELETED, This line should not be reached")
+						break
 					}
 					addrList := recv.Contacts
 					contactList := NewResultList(k)
@@ -68,8 +80,8 @@ func Run(state Kademlia, cliCh chan string) {
 					//Merge new contacts into old list and update map
 					lookup.klist.Merge(contactList, *targetID)
 					receivedID := NewSha1KademliaID([]byte(recv.Address))
-					lookup.sentmap[receivedID.String()] = true
 
+					lookup.sentmap[receivedID.String()] = true
 					state.convIDMap[recv.ConvID] = lookup
 					//k new find_nodes need to be sent
 					count := 0
@@ -80,6 +92,7 @@ func Run(state Kademlia, cliCh chan string) {
 							rpc := msg.MakeFindContact(state.network.Self, targetID.String(), recv.ConvID)
 							udp.Client(v.Address, rpc)
 							lookup.sentmap[v.ID.String()] = false //No response yet
+							go Lookup_timer(state.convIDMap, stateMutex, v.ID.String(), recv.ConvID)
 							count++
 						}
 						if count >= alpha {
@@ -89,35 +102,13 @@ func Run(state Kademlia, cliCh chan string) {
 
 					state.convIDMap[recv.ConvID] = lookup //Update map before checking if done
 
-					count = 0
-					for _, responded := range lookup.sentmap {
-						if !responded {
-							count++
-						}
-					}
-
-					if count == 0 {
-						//All contacts have responded, we are done
-						if lookup.rpctype == "STORE" {
-							//Instruct the nodes to store
-							for _, v := range lookup.klist.List {
-								state.network.SendStoreMessage(lookup.value, v.Address)
-							}
-						}
-						if lookup.rpctype == "JOIN" {
-							for _, v := range lookup.klist.List {
-								joinid := NewSha1KademliaID([]byte(v.Address))
-								state.routingTable.AddContact(NewContact(joinid, v.Address))
-							}
-						}
-
-						//Delete the lookup when we are done with the conversation
-						delete(state.convIDMap, recv.ConvID)
-
-					}
+					CheckMsgChainDone(lookup, recv.ConvID)
+					stateMutex.Unlock()
 
 				case "STORE":
+					stateMutex.Lock()
 					state.Store(recv.StoreValue)
+					stateMutex.Unlock()
 				}
 			} else {
 				fmt.Println("Channel closed")
@@ -147,16 +138,22 @@ func Run(state Kademlia, cliCh chan string) {
 				case "add contact":
 					id := NewSha1KademliaID([]byte(cliInst[n+1:]))
 					c := NewContact(id, cliInst[n+1:])
+					stateMutex.Lock()
 					state.routingTable.AddContact(c)
+					stateMutex.Unlock()
 				case "put":
 					storeVal := cliInst[n+1:]
+					stateMutex.Lock()
 					storeLookup := NewLookUp(k, "STORE", []byte(storeVal))
 					convID, _ := uuid.NewV4()
 					storeTarget := NewSha1KademliaID([]byte(storeVal))
 					state.convIDMap[*convID] = *storeLookup
 					state.LookupContact(storeTarget, *convID)
+					stateMutex.Unlock()
 				case "map":
+					stateMutex.Lock()
 					fmt.Println(state.valueMap)
+					stateMutex.Unlock()
 				case "debug":
 					debug = !debug
 				default:
@@ -169,4 +166,34 @@ func Run(state Kademlia, cliCh chan string) {
 			//idk
 		}
 	}
+}
+
+func CheckMsgChainDone(lookup LookUp, ConvID uuid.UUID) {
+	count := 0
+	for _, responded := range lookup.sentmap {
+		if !responded {
+			count++
+		}
+	}
+
+	if count == 0 {
+		//All contacts have responded, we are done
+		if lookup.rpctype == "STORE" {
+			//Instruct the nodes to store
+			for _, v := range lookup.klist.List {
+				state.network.SendStoreMessage(lookup.value, v.Address)
+			}
+		}
+		if lookup.rpctype == "JOIN" {
+			for _, v := range lookup.klist.List {
+				joinid := NewSha1KademliaID([]byte(v.Address))
+				state.routingTable.AddContact(NewContact(joinid, v.Address))
+			}
+		}
+
+		//Delete the lookup when we are done with the conversation
+		delete(state.convIDMap, ConvID)
+
+	}
+
 }
