@@ -22,9 +22,9 @@ func TestRoutingTable(t *testing.T) {
 	}
 }
 
-func TestKClosest1(t *testing.T){
+func TestKClosest1(t *testing.T) {
 	serverCh := make(chan msg.RPC, 50)
-	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"), serverCh)
+	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"), serverCh, true)
 
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8001"))
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("1111111100000000000000000000000000000000"), "localhost:8002"))
@@ -37,18 +37,16 @@ func TestKClosest1(t *testing.T){
 
 	contacts := kademlia.KClosestNodes(&tc)
 
-	for i := range contacts{
+	for i := range contacts {
 		fmt.Println(contacts[i].String())
 	}
 
-
-
 }
 
-func TestKClosest2(t *testing.T){
+func TestKClosest2(t *testing.T) {
 
 	serverCh := make(chan msg.RPC, 50)
-	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"), serverCh)
+	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"), serverCh, true)
 
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8001"))
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("1111111100000000000000000000000000000000"), "localhost:8002"))
@@ -78,15 +76,12 @@ func TestKClosest2(t *testing.T){
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("1111111430000000000000000000000000000000"), "localhost:8002"))
 	kademlia.routingTable.AddContact(NewContact(NewKademliaID("2111111430000000000000000000000000000000"), "localhost:8002"))
 
-
 	tc := NewContact(NewKademliaID("2111111400000000000000000000000000000000"), "localhost:8002")
 
 	contacts := kademlia.KClosestNodes(&tc)
 
-	for i := range contacts{
+	for i := range contacts {
 		fmt.Println(contacts[i].String())
 	}
-
-
 
 }
