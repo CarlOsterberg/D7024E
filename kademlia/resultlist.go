@@ -60,3 +60,15 @@ func (resultList *ResultList) Merge(other *ResultList, target KademliaID) {
 		resultList.Insert(v, target)
 	}
 }
+
+func (resultList *ResultList) Delete(contact Contact){
+	idx := -1
+	for i, v := range resultList.List{
+		if v.ID.Equals(contact.ID) && v.Address == contact.Address{
+			idx = i
+		}
+	}
+	if idx != -1{
+		resultList.List = append(resultList.List[:idx], resultList.List[idx+1:]...)
+	}
+}

@@ -117,4 +117,30 @@ func TestMerge(t *testing.T) {
 
 
 
+
+}
+
+func TestDelete(t *testing.T) {
+	rl1 := NewResultList(3)
+	rl2 := NewResultList(3)
+
+	target := NewKademliaID("FFFFFFFF00000000000000000000000000000001")
+
+	id1 := NewKademliaID("FFFFFFFF00000000000000000000000000000001")
+	id2 := NewKademliaID("FFFFFFFF00000000000000000000000000000002")
+	id3 := NewKademliaID("FFFFFFFF00000000000000000000000000000003")
+
+	rl1.Insert(NewContact(id1, "localhost"), *target)
+	rl1.Insert(NewContact(id2, "localhost"), *target)
+	rl1.Insert(NewContact(id3, "localhost"), *target)
+
+	rl2.Insert(NewContact(id1, "localhost"), *target)
+	rl2.Insert(NewContact(id3, "localhost"), *target)
+
+	rl1.Delete(NewContact(id2, "localhost"))
+
+
+	for i, _ := range rl1.List {
+		assert.Equal(t, rl1.List[i], rl2.List[i])
+	}
 }
