@@ -66,15 +66,16 @@ func Run(st Kademlia, cliCh chan string) {
 					stateMutex.Unlock()
 				case "FIND_VALUE":
 					key := recv.TargetID
+					stateMutex.Lock()
 					val, ok := state.valueMap[key]
-					if ok{
+					if ok {
 						//If value is found send back the value and an empty contact list
 						addressList := []string{}
 						response := msg.MakeFindContactResponse(state.network.Self, addressList,
 							recv.TargetID, recv.ConvID, string(val))
 
 						udp.Client(recv.Address, response)
-					}else{
+					} else {
 						//Otherwise, standard find_contact procedure
 						kadID := NewKademliaID(recv.TargetID)
 						target := NewContact(kadID, "")
@@ -87,15 +88,15 @@ func Run(st Kademlia, cliCh chan string) {
 							recv.TargetID, recv.ConvID, "")
 						udp.Client(recv.Address, response)
 					}
+					stateMutex.Unlock()
 				case "FIND_CONTACT_RESPONSE":
 					stateMutex.Lock()
 					lookup, ok := state.convIDMap[recv.ConvID]
 					if !ok {
 						break
 					}
-
 					//If find_value has found a value we mark the lookup as done and save the value
-					if recv.Value != "" && lookup.rpctype == "GET"{
+					if recv.Value != "" && lookup.rpctype == "GET" {
 						lookup.foundValue = true
 						lookup.value = []byte(recv.Value)
 					}
@@ -118,7 +119,7 @@ func Run(st Kademlia, cliCh chan string) {
 					//k new find_nodes need to be sent
 					count := 0
 					for _, v := range lookup.klist.List {
-						if lookup.foundValue{ //Value is found, don't send any more requests
+						if lookup.foundValue { //Value is found, don't send any more requests
 							break
 						}
 						if _, ok := lookup.sentmap[v.ID.String()]; !ok {
@@ -187,11 +188,13 @@ func Run(st Kademlia, cliCh chan string) {
 					stateMutex.Unlock()
 				case "get":
 					key := cliInst[n+1:]
+					stateMutex.Lock()
 					getLookup := NewLookUp(k, "GET", nil)
 					convID, _ := uuid.NewV4()
 					target := NewKademliaID(key)
 					state.convIDMap[*convID] = *getLookup
 					state.LookupData(target, *convID)
+					stateMutex.Unlock()
 				case "map":
 					stateMutex.Lock()
 					fmt.Println(state.valueMap)
@@ -232,16 +235,15 @@ func CheckMsgChainDone(lookup LookUp, ConvID uuid.UUID) {
 				state.routingTable.AddContact(NewContact(joinid, v.Address))
 			}
 		}
-    if lookup.rpctype == "GET" {
-			if !lookup.foundValue{
+		if lookup.rpctype == "GET" {
+			if !lookup.foundValue {
 				fmt.Println("The value for the given key was not found.")
-			}else{
+			} else {
 				fmt.Println("The value for the given key is: ", string(lookup.value))
 			}
 		}
 		//Delete the lookup when we are done with the conversation
 		delete(state.convIDMap, ConvID)
-
 	}
 
 }
