@@ -46,7 +46,7 @@ func (kademlia *Kademlia) LookupContact(target *KademliaID, convID uuid.UUID, st
 	for i := 0; i < len(closestContacts); i++ {
 		kademlia.network.SendFindContactMessage(&closestContacts[i], convID, *target)
 		kademlia.convIDMap[convID].sentmap[closestContacts[i].ID.String()] = false
-		go Lookup_timer(stateMutex, closestContacts[i], convID, state)
+		go Lookup_timer(stateMutex, closestContacts[i], convID, *kademlia)
 	}
 }
 
@@ -61,7 +61,7 @@ func (kademlia *Kademlia) LookupData(target *KademliaID, convID uuid.UUID, state
 	for i := 0; i < len(closestContacts); i++ {
 		kademlia.network.SendFindDataMessage(&closestContacts[i], convID, *target)
 		kademlia.convIDMap[convID].sentmap[closestContacts[i].ID.String()] = false
-		go Lookup_timer(stateMutex, closestContacts[i], convID, state)
+		go Lookup_timer(stateMutex, closestContacts[i], convID, *kademlia)
 	}
 }
 

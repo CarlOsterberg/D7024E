@@ -23,7 +23,7 @@ func Lookup_timer(stateMutex *sync.Mutex, contact Contact, convID uuid.UUID, sta
 		lookup.klist.Delete(contact)
 		state.convIDMap[convID] = lookup
 		state.routingTable.deleteContact(contact)
-		CheckMsgChainDone(convMap[convID], convID)
+		CheckMsgChainDone(state, convMap[convID], convID)
 		state.network.SendPingMessage(&contact)
 	}
 	stateMutex.Unlock()
