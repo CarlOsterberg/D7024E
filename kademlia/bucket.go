@@ -56,3 +56,13 @@ func (bucket *bucket) GetContactAndCalcDistance(target *KademliaID) []Contact {
 func (bucket *bucket) Len() int {
 	return bucket.list.Len()
 }
+
+func (bucket *bucket) Delete(contact Contact) {
+	for e := bucket.list.Front(); e != nil; e = e.Next() {
+		mby := e.Value.(Contact)
+		if mby.Address == contact.Address {
+			bucket.list.Remove(e)
+			break
+		}
+	}
+}
