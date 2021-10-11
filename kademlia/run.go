@@ -120,7 +120,6 @@ func Run(st Kademlia, cliCh chan string) {
 					state.convIDMap[recv.ConvID] = lookup
 					//k new find_nodes need to be sent
 					count := 0
-					fmt.Println()
 					for _, v := range lookup.klist.List {
 						if lookup.foundValue { //Value is found, don't send any more requests
 							break
