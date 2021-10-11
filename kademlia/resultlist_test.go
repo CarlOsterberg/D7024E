@@ -144,3 +144,66 @@ func TestDelete(t *testing.T) {
 		assert.Equal(t, rl1.List[i], rl2.List[i])
 	}
 }
+
+func TestSort(t *testing.T) {
+
+	rl := NewResultList(20)
+
+	target := NewKademliaID("FFFFFFFF00000000000000000000000000000001")
+
+	id1 := NewKademliaID("FFFFFFFF00000000000000000000000000000001")
+	id2 := NewKademliaID("FFFFFFFF00000000000000000000000000000002")
+	id3 := NewKademliaID("FFFFFFFF00000000000000000000000000000003")
+	id4 := NewKademliaID("FFFFFFFF00000000000000000000000000000004")
+	id5 := NewKademliaID("FFFFFFFF00000000000000000000000000000005")
+	id6 := NewKademliaID("FFFFFFFF00000000000000000000000000000006")
+	id7 := NewKademliaID("FFFFFFFF00000000000000000000000000000007")
+	id8 := NewKademliaID("FFFFFFFF00000000000000000000000000000008")
+	id9 := NewKademliaID("FFFFFFFF00000000000000000000000000000009")
+	id10 := NewKademliaID("FFFFFFFF00000000000000000000000000000010")
+	id11 := NewKademliaID("FFFFFFFF00000000000000000000000000000011")
+	id12 := NewKademliaID("FFFFFFFF00000000000000000000000000000012")
+	id13 := NewKademliaID("FFFFFFFF00000000000000000000000000000013")
+	id14 := NewKademliaID("FFFFFFFF00000000000000000000000000000014")
+	id15 := NewKademliaID("FFFFFFFF00000000000000000000000000000015")
+	id16 := NewKademliaID("FFFFFFFF00000000000000000000000000000016")
+	id17 := NewKademliaID("FFFFFFFF00000000000000000000000000000017")
+	id18 := NewKademliaID("FFFFFFFF00000000000000000000000000000018")
+	id19 := NewKademliaID("FFFFFFFF00000000000000000000000000000019")
+	id20 := NewKademliaID("FFFFFFFF00000000000000000000000000000020")
+	id21 := NewKademliaID("FFFFFFFF00000000000000000000000000000021")
+
+	rl.Insert(NewContact(id1, "localhost"), *target)
+	rl.Insert(NewContact(id2, "localhost"), *target)
+	rl.Insert(NewContact(id3, "localhost"), *target)
+	rl.Insert(NewContact(id4, "localhost"), *target)
+	rl.Insert(NewContact(id5, "localhost"), *target)
+	rl.Insert(NewContact(id6, "localhost"), *target)
+	rl.Insert(NewContact(id7, "localhost"), *target)
+	rl.Insert(NewContact(id8, "localhost"), *target)
+	rl.Insert(NewContact(id9, "localhost"), *target)
+	rl.Insert(NewContact(id10, "localhost"), *target)
+	rl.Insert(NewContact(id11, "localhost"), *target)
+	rl.Insert(NewContact(id12, "localhost"), *target)
+	rl.Insert(NewContact(id13, "localhost"), *target)
+	rl.Insert(NewContact(id14, "localhost"), *target)
+	rl.Insert(NewContact(id15, "localhost"), *target)
+	rl.Insert(NewContact(id16, "localhost"), *target)
+	rl.Insert(NewContact(id17, "localhost"), *target)
+	rl.Insert(NewContact(id18, "localhost"), *target)
+	rl.Insert(NewContact(id19, "localhost"), *target)
+	rl.Insert(NewContact(id20, "localhost"), *target)
+	rl.Insert(NewContact(id21, "localhost"), *target)
+
+	rl.Sort(*target)
+
+	assert.Equal(t, len(rl.List), 20)
+
+	var distance = NewKademliaID("0000000000000000000000000000000000000000")
+
+	for _, v := range rl.List {
+		assert.False(t, v.ID.CalcDistance(target).Less(distance))
+		distance = v.ID.CalcDistance(target)
+	}
+
+}

@@ -1,5 +1,7 @@
 package kademlia
 
+import "sort"
+
 //ResultList keeps a list of KademliaID with a max size
 type ResultList struct {
 	List []Contact
@@ -12,6 +14,22 @@ func NewResultList(size int) *ResultList {
 	resultList.List = reslist
 	resultList.Size = size
 	return resultList
+}
+
+var sortingTarget KademliaID
+
+type byTargetDistance []Contact
+
+func (b byTargetDistance) Len() int{
+	return len(b)
+}
+
+func (b byTargetDistance) Swap(i, j int){
+	b[i], b[j] = b[j], b[i]
+}
+
+func (b byTargetDistance) Less(i, j int) bool{
+	return b[i].ID.CalcDistance(&sortingTarget).Less(b[j].ID.CalcDistance(&sortingTarget))
 }
 
 //Insert tries to insert an id to the list. If it is better than an existing element it will replace the worst one.
@@ -71,4 +89,10 @@ func (resultList *ResultList) Delete(contact Contact){
 	if idx != -1{
 		resultList.List = append(resultList.List[:idx], resultList.List[idx+1:]...)
 	}
+}
+
+//Sort sorts the list by distance to the target, only one thread may use this
+func (resultList *ResultList) Sort(target KademliaID){
+	sortingTarget = target
+	sort.Sort(byTargetDistance(resultList.List))
 }
