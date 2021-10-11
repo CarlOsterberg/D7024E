@@ -112,6 +112,8 @@ func Run(st Kademlia, cliCh chan string) {
 					}
 					//Merge new contacts into old list and update map
 					lookup.klist.Merge(contactList, *targetID)
+					//Sort the list so the best nodes are picked
+					lookup.klist.Sort(*targetID)
 					receivedID := NewSha1KademliaID([]byte(recv.Address))
 
 					lookup.sentmap[receivedID.String()] = true
