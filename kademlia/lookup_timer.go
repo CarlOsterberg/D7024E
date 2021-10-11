@@ -1,25 +1,32 @@
 package kademlia
 
 import (
+	"fmt"
 	uuid "github.com/nu7hatch/gouuid"
 	"sync"
 	"time"
 )
 
-func Lookup_timer(convIdMap map[uuid.UUID]LookUp, stateMutex *sync.Mutex, kademliaID string, convID uuid.UUID) {
+func Lookup_timer(stateMutex *sync.Mutex, contact Contact, convID uuid.UUID, state Kademlia) {
 	//timeout
 	time.Sleep(10 * time.Second)
 	stateMutex.Lock()
-	lookup, ok := convIdMap[convID]
+	convMap := state.convIDMap
+	lookup, ok := convMap[convID]
 	//The conversion chain has ended and this thread should terminate
 	if !ok {
 		stateMutex.Unlock()
 		return
 	}
+	fmt.Println("Pre if, lookup_timer.go")
+	fmt.Printf("Staus for %v is %v\n", contact.Address, lookup.sentmap[contact.ID.String()])
 	//If the node hasn't responded yet delete the entry from the sentmap
-	if lookup.sentmap[kademliaID] == false {
-		delete(lookup.sentmap, kademliaID)
-		CheckMsgChainDone(convIdMap[convID], convID)
+	if lookup.sentmap[contact.ID.String()] == false {
+		delete(lookup.sentmap, contact.ID.String())
+		state.routingTable.deleteContact(contact)
+		fmt.Printf("attempt to delete %v", contact)
+		CheckMsgChainDone(convMap[convID], convID)
+		state.network.SendPingMessage(&contact)
 	}
 	stateMutex.Unlock()
 }

@@ -128,7 +128,7 @@ func Run(st Kademlia, cliCh chan string) {
 							rpc := msg.MakeFindContact(state.network.Self, targetID.String(), recv.ConvID)
 							udp.Client(v.Address, rpc)
 							lookup.sentmap[v.ID.String()] = false //No response yet
-							go Lookup_timer(state.convIDMap, stateMutex, v.ID.String(), recv.ConvID)
+							go Lookup_timer(stateMutex, v, recv.ConvID, state)
 							count++
 						}
 						if count >= alpha {
@@ -163,12 +163,12 @@ func Run(st Kademlia, cliCh chan string) {
 				case "find closest":
 					contacts := state.routingTable.FindClosestContacts(state.routingTable.me.ID, 1)
 					for i := range contacts {
-						fmt.Println(contacts[i].String())
+						fmt.Printf("%v\n", contacts[i].String())
 					}
 				case "print buckets":
 					for _, bucket := range state.routingTable.buckets {
 						for e := bucket.list.Front(); e != nil; e = e.Next() {
-							fmt.Println(e.Value)
+							fmt.Printf("%v\n", e.Value)
 						}
 					}
 				case "add contact":
@@ -201,6 +201,11 @@ func Run(st Kademlia, cliCh chan string) {
 					stateMutex.Unlock()
 				case "debug":
 					debug = !debug
+				case "delete":
+					reciever := NewContact(NewSha1KademliaID([]byte(cliInst[n+1:])), cliInst[n+1:])
+					stateMutex.Lock()
+					state.routingTable.deleteContact(reciever)
+					stateMutex.Unlock()
 				default:
 					fmt.Println("Unknown command")
 				}
