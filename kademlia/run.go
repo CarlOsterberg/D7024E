@@ -70,7 +70,7 @@ func Run(st Kademlia, cliCh chan string) {
 					val, ok := state.valueMap[key]
 					if ok {
 						//If value is found send back the value and an empty contact list
-						addressList := []string{}
+						var addressList []string
 						response := msg.MakeFindContactResponse(state.network.Self, addressList,
 							recv.TargetID, recv.ConvID, string(val))
 
@@ -118,6 +118,7 @@ func Run(st Kademlia, cliCh chan string) {
 					state.convIDMap[recv.ConvID] = lookup
 					//k new find_nodes need to be sent
 					count := 0
+					fmt.Println()
 					for _, v := range lookup.klist.List {
 						if lookup.foundValue { //Value is found, don't send any more requests
 							break
@@ -125,10 +126,11 @@ func Run(st Kademlia, cliCh chan string) {
 						if _, ok := lookup.sentmap[v.ID.String()]; !ok {
 							//if nil
 							//Send find node
+							fmt.Printf("Started for %v\n", v.ID.String())
 							rpc := msg.MakeFindContact(state.network.Self, targetID.String(), recv.ConvID)
 							udp.Client(v.Address, rpc)
 							lookup.sentmap[v.ID.String()] = false //No response yet
-							go Lookup_timer(state.convIDMap, stateMutex, v.ID.String(), recv.ConvID)
+							go Lookup_timer(stateMutex, v, recv.ConvID, state)
 							count++
 						}
 						if count >= alpha {
@@ -163,12 +165,12 @@ func Run(st Kademlia, cliCh chan string) {
 				case "find closest":
 					contacts := state.routingTable.FindClosestContacts(state.routingTable.me.ID, 1)
 					for i := range contacts {
-						fmt.Println(contacts[i].String())
+						fmt.Printf("%v\n", contacts[i].String())
 					}
 				case "print buckets":
 					for _, bucket := range state.routingTable.buckets {
 						for e := bucket.list.Front(); e != nil; e = e.Next() {
-							fmt.Println(e.Value)
+							fmt.Printf("%v\n", e.Value)
 						}
 					}
 				case "add contact":
@@ -184,7 +186,7 @@ func Run(st Kademlia, cliCh chan string) {
 					convID, _ := uuid.NewV4()
 					storeTarget := NewSha1KademliaID([]byte(storeVal))
 					state.convIDMap[*convID] = *storeLookup
-					state.LookupContact(storeTarget, *convID)
+					state.LookupContact(storeTarget, *convID, stateMutex)
 					stateMutex.Unlock()
 				case "get":
 					key := cliInst[n+1:]
@@ -193,7 +195,7 @@ func Run(st Kademlia, cliCh chan string) {
 					convID, _ := uuid.NewV4()
 					target := NewKademliaID(key)
 					state.convIDMap[*convID] = *getLookup
-					state.LookupData(target, *convID)
+					state.LookupData(target, *convID, stateMutex)
 					stateMutex.Unlock()
 				case "map":
 					stateMutex.Lock()
@@ -201,6 +203,11 @@ func Run(st Kademlia, cliCh chan string) {
 					stateMutex.Unlock()
 				case "debug":
 					debug = !debug
+				case "delete":
+					reciever := NewContact(NewSha1KademliaID([]byte(cliInst[n+1:])), cliInst[n+1:])
+					stateMutex.Lock()
+					state.routingTable.deleteContact(reciever)
+					stateMutex.Unlock()
 				default:
 					fmt.Println("Unknown command")
 				}
