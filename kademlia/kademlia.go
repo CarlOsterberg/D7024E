@@ -1,10 +1,12 @@
 package kademlia
 
 import (
+	"fmt"
 	uuid "github.com/nu7hatch/gouuid"
 	"program/kademlia/msg"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 const alpha = 3
@@ -39,12 +41,14 @@ func NewKademlia(me Contact, ch chan msg.RPC, test bool) *Kademlia {
 }
 
 // LookupContact performs the node-lookup recursively
-func (kademlia *Kademlia) LookupContact(target *KademliaID, convID uuid.UUID) {
+func (kademlia *Kademlia) LookupContact(target *KademliaID, convID uuid.UUID, stateMutex *sync.Mutex) {
 	// TODO
 	closestContacts := kademlia.routingTable.FindClosestContacts(target, alpha)
 	for i := 0; i < len(closestContacts); i++ {
 		kademlia.network.SendFindContactMessage(&closestContacts[i], convID, *target)
 		kademlia.convIDMap[convID].sentmap[closestContacts[i].ID.String()] = false
+		fmt.Printf("Started for %v\n", *target)
+		go Lookup_timer(stateMutex, closestContacts[i], convID, state)
 	}
 }
 
@@ -54,11 +58,13 @@ func (kademlia *Kademlia) KClosestNodes(target *Contact) []Contact {
 	return closestContacts
 }
 
-func (kademlia *Kademlia) LookupData(target *KademliaID, convID uuid.UUID) {
+func (kademlia *Kademlia) LookupData(target *KademliaID, convID uuid.UUID, stateMutex *sync.Mutex) {
 	closestContacts := kademlia.routingTable.FindClosestContacts(target, alpha)
 	for i := 0; i < len(closestContacts); i++ {
 		kademlia.network.SendFindDataMessage(&closestContacts[i], convID, *target)
 		kademlia.convIDMap[convID].sentmap[closestContacts[i].ID.String()] = false
+		fmt.Printf("Started for %v\n", target)
+		go Lookup_timer(stateMutex, closestContacts[i], convID, state)
 	}
 }
 
