@@ -34,9 +34,9 @@ func TestMakeFindContact(t *testing.T) {
 	u, _ := uuid.NewV4()
 	formatted := MakeFindContact("12.34.56.78:1234", "00000000000000000000", *u)
 	correct := &RPC{
-		RPC: "FIND_CONTACT",
-		ConvID: *u,
-		Address: "12.34.56.78:1234",
+		RPC:      "FIND_CONTACT",
+		ConvID:   *u,
+		Address:  "12.34.56.78:1234",
 		TargetID: "00000000000000000000",
 	}
 	decodedFormatted := DecodeRPC(formatted)
@@ -50,12 +50,12 @@ func TestMakeFindContactResponse(t *testing.T) {
 	idList = append(idList, "ok")
 	formatted := MakeFindContactResponse("12.34.56.78:1234", idList, "00000000000000000000", *u, "hello")
 	correct := &RPC{
-		RPC: "FIND_CONTACT_RESPONSE",
-		ConvID: *u,
-		Address: "12.34.56.78:1234",
+		RPC:      "FIND_CONTACT_RESPONSE",
+		ConvID:   *u,
+		Address:  "12.34.56.78:1234",
 		Contacts: idList,
 		TargetID: "00000000000000000000",
-		Value: "hello",
+		Value:    "hello",
 	}
 	decodedFormatted := DecodeRPC(formatted)
 	assert.Equal(t, decodedFormatted, correct, "MakeFindContactError")
@@ -71,4 +71,27 @@ func TestDecodeRPC(t *testing.T) {
 	}
 	decoded := DecodeRPC(data)
 	assert.True(t, TestRPC(decoded), "DecodeRPC() error")
+}
+func TestMakeStore(t *testing.T) {
+	formatted := MakeStore("12.34.56.78:1234", []byte("hej"))
+	decodedFormatted := DecodeRPC(formatted)
+	correct := &RPC{
+		RPC:        "STORE",
+		Address:    "12.34.56.78:1234",
+		StoreValue: []byte("hej"),
+	}
+	assert.Equal(t, decodedFormatted, correct, "MakePing() error")
+}
+
+func TestMakeFindValue(t *testing.T) {
+	u, _ := uuid.NewV4()
+	formatted := MakeFindValue("12.34.56.78:1234", "00000000000000000000", *u)
+	decodedFormatted := DecodeRPC(formatted)
+	correct := &RPC{
+		RPC:      "FIND_VALUE",
+		Address:  "12.34.56.78:1234",
+		TargetID: "00000000000000000000",
+		ConvID:   *u,
+	}
+	assert.Equal(t, decodedFormatted, correct, "MakePing() error")
 }
