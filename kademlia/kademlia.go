@@ -1,7 +1,6 @@
 package kademlia
 
 import (
-	"fmt"
 	uuid "github.com/nu7hatch/gouuid"
 	"program/kademlia/msg"
 	"strconv"
@@ -47,7 +46,6 @@ func (kademlia *Kademlia) LookupContact(target *KademliaID, convID uuid.UUID, st
 	for i := 0; i < len(closestContacts); i++ {
 		kademlia.network.SendFindContactMessage(&closestContacts[i], convID, *target)
 		kademlia.convIDMap[convID].sentmap[closestContacts[i].ID.String()] = false
-		fmt.Printf("Started for %v\n", *target)
 		go Lookup_timer(stateMutex, closestContacts[i], convID, state)
 	}
 }
@@ -63,7 +61,6 @@ func (kademlia *Kademlia) LookupData(target *KademliaID, convID uuid.UUID, state
 	for i := 0; i < len(closestContacts); i++ {
 		kademlia.network.SendFindDataMessage(&closestContacts[i], convID, *target)
 		kademlia.convIDMap[convID].sentmap[closestContacts[i].ID.String()] = false
-		fmt.Printf("Started for %v\n", target)
 		go Lookup_timer(stateMutex, closestContacts[i], convID, state)
 	}
 }

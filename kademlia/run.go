@@ -128,7 +128,6 @@ func Run(st Kademlia, cliCh chan string) {
 						if _, ok := lookup.sentmap[v.ID.String()]; !ok {
 							//if nil
 							//Send find node
-							fmt.Printf("Started for %v\n", v.ID.String())
 							rpc := msg.MakeFindContact(state.network.Self, targetID.String(), recv.ConvID)
 							udp.Client(v.Address, rpc)
 							lookup.sentmap[v.ID.String()] = false //No response yet

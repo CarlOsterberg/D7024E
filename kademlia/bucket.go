@@ -2,7 +2,6 @@ package kademlia
 
 import (
 	"container/list"
-	"fmt"
 )
 
 // bucket definition
@@ -62,7 +61,6 @@ func (bucket *bucket) Delete(contact Contact) {
 	for e := bucket.list.Front(); e != nil; e = e.Next() {
 		mby := e.Value.(Contact)
 		if mby.Address == contact.Address {
-			fmt.Printf("attempt to delete %v", e.Value)
 			bucket.list.Remove(e)
 			break
 		}
