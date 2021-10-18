@@ -2,6 +2,7 @@ package kademlia
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"program/kademlia/msg"
 	"testing"
 )
@@ -84,4 +85,13 @@ func TestKClosest2(t *testing.T) {
 		fmt.Println(contacts[i].String())
 	}
 
+}
+func TestDeleteContact(t *testing.T) {
+	serverCh := make(chan msg.RPC, 50)
+	kademlia := NewKademlia(NewContact(NewKademliaID("FFFFFFFF00000000000000000000000000000000"), "localhost:8000"), serverCh, true)
+	kademlia.routingTable.AddContact(NewContact(NewKademliaID("2111111430000000000000000000000000000000"), "localhost:8002"))
+	kademlia.routingTable.AddContact(NewContact(NewKademliaID("2111111430000000000000000000000000000001"), "localhost:8002"))
+	kademlia.routingTable.deleteContact(NewContact(NewKademliaID("2111111430000000000000000000000000000000"), "localhost:8002"))
+	kademlia.routingTable.deleteContact(NewContact(NewKademliaID("2111111430000000000000000000000000000001"), "localhost:8002"))
+	assert.Equal(t, kademlia.routingTable.FindClosestContacts(NewKademliaID("2111111430000000000000000000000000000000"), 2), []Contact(nil))
 }
